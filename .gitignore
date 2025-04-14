@@ -1,0 +1,36 @@
+# Node
+**/node_modules/
+**/.next/
+**/.env.local
+**/package-lock.json
+
+# Laravel
+**/vendor/
+**/.env
+**/.env.*
+**/storage/*.key
+**/storage/app/public/
+**/storage/debugbar/
+**/bootstrap/cache/*.php
+
+# Composer
+**/composer.lock
+
+# Docker
+docker/mysql/
+docker/redis/
+docker/data/
+**/docker-compose.override.yml
+
+# Logs
+*.log
+**/storage/logs/*.log
+
+# IDE & System files
+.idea/
+.vscode/
+.DS_Store
+*.swp
+
+# Git
+*.orig

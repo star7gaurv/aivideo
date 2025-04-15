@@ -1,25 +1,43 @@
-# Use the official PHP image with required extensions for Laravel
-FROM php:8.1-fpm
+# Use the official PHP 8.2 image with FPM (FastCGI Process Manager) for Nginx
+FROM php:8.2-fpm
 
-# Install system dependencies and PHP extensions required by Laravel
-RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip git && \
-    docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install gd pdo pdo_mysql
-
-# Set the working directory to the backend folder
+# Set the working directory
 WORKDIR /var/www/html/aivideo/backend
 
-# Copy the existing Laravel project files into the container
-COPY . .
+# Install system dependencies required for Laravel
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libxml2-dev \
+    zip \
+    git \
+    curl \
+    nginx \
+    libssl-dev \
+    libmcrypt-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_mysql xml
 
-# Install Composer (Laravel's dependency manager)
+# Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install Laravel dependencies using Composer
+# Install the PHP dependencies with Composer (without dev dependencies)
+COPY . .
 RUN composer install --no-dev --optimize-autoloader
 
-# Expose the port that Laravel will run on (default is 9000 for PHP-FPM)
+# Set proper permissions for Laravel storage and cache directories
+RUN chown -R www-data:www-data /var/www/html/aivideo/backend/storage /var/www/html/aivideo/backend/bootstrap/cache
+RUN chmod -R 775 /var/www/html/aivideo/backend/storage /var/www/html/aivideo/backend/bootstrap/cache
+
+# Expose port 9000 for PHP-FPM (or another port as needed)
 EXPOSE 9000
 
-# Set the entrypoint to start PHP-FPM
-CMD ["php-fpm"]
+# Run migrations (this can be adjusted if needed for different environments)
+RUN php artisan migrate --force
+
+# Optimize Laravel application (including config, routes, and autoload)
+RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
+
+# Start PHP-FPM and Nginx
+CMD service nginx start && php-fpm

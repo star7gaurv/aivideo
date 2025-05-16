@@ -34,3 +34,4 @@ docker/data/
 
 # Git
 *.orig
+.qodo

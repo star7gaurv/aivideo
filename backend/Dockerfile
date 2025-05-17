@@ -34,8 +34,8 @@ RUN chmod -R 775 /var/www/html/aivideo/backend/storage /var/www/html/aivideo/bac
 EXPOSE 9000
 
 # Run migrations (this can be adjusted if needed for different environments)
-RUN php artisan migrate --force
-
+#RUN php artisan migrate --force
+RUN npm install && npm run dev
 # Optimize Laravel application (including config, routes, and autoload)
 RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
 

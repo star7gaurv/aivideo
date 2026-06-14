@@ -1,0 +1,156 @@
+{
+  "fps": 30,
+  "scenes": [
+    {
+      "id": "discovery",
+      "audio": "ancient/discovery.wav",
+      "audioDuration": 17.55,
+      "durationInFrames": 541
+    },
+    {
+      "id": "question",
+      "audio": "ancient/question.wav",
+      "audioDuration": 6.9,
+      "durationInFrames": 221
+    },
+    {
+      "id": "stereotype",
+      "audio": "ancient/stereotype.wav",
+      "audioDuration": 13.04,
+      "durationInFrames": 405
+    },
+    {
+      "id": "twist",
+      "audio": "ancient/twist.wav",
+      "audioDuration": 14.93,
+      "durationInFrames": 462
+    },
+    {
+      "id": "mechanism",
+      "audio": "ancient/mechanism.wav",
+      "audioDuration": 11.58,
+      "durationInFrames": 361
+    },
+    {
+      "id": "prehistoric",
+      "audio": "ancient/prehistoric.wav",
+      "audioDuration": 12.49,
+      "durationInFrames": 389
+    },
+    {
+      "id": "roulette",
+      "audio": "ancient/roulette.wav",
+      "audioDuration": 12.77,
+      "durationInFrames": 397
+    },
+    {
+      "id": "stability",
+      "audio": "ancient/stability.wav",
+      "audioDuration": 14.29,
+      "durationInFrames": 443
+    },
+    {
+      "id": "stored",
+      "audio": "ancient/stored.wav",
+      "audioDuration": 17.23,
+      "durationInFrames": 531
+    },
+    {
+      "id": "moviemyth",
+      "audio": "ancient/moviemyth.wav",
+      "audioDuration": 15.1,
+      "durationInFrames": 467
+    },
+    {
+      "id": "dailylife",
+      "audio": "ancient/dailylife.wav",
+      "audioDuration": 14.3,
+      "durationInFrames": 443
+    },
+    {
+      "id": "consistency",
+      "audio": "ancient/consistency.wav",
+      "audioDuration": 15.66,
+      "durationInFrames": 484
+    },
+    {
+      "id": "venus",
+      "audio": "ancient/venus.wav",
+      "audioDuration": 14.7,
+      "durationInFrames": 455
+    },
+    {
+      "id": "figurines",
+      "audio": "ancient/figurines.wav",
+      "audioDuration": 18.16,
+      "durationInFrames": 559
+    },
+    {
+      "id": "agriculture",
+      "audio": "ancient/agriculture.wav",
+      "audioDuration": 17.9,
+      "durationInFrames": 551
+    },
+    {
+      "id": "villages",
+      "audio": "ancient/villages.wav",
+      "audioDuration": 11.92,
+      "durationInFrames": 372
+    },
+    {
+      "id": "status",
+      "audio": "ancient/status.wav",
+      "audioDuration": 20.29,
+      "durationInFrames": 623
+    },
+    {
+      "id": "civilizations",
+      "audio": "ancient/civilizations.wav",
+      "audioDuration": 17.48,
+      "durationInFrames": 539
+    },
+    {
+      "id": "tradeoffs",
+      "audio": "ancient/tradeoffs.wav",
+      "audioDuration": 20.53,
+      "durationInFrames": 630
+    },
+    {
+      "id": "honey",
+      "audio": "ancient/honey.wav",
+      "audioDuration": 19.56,
+      "durationInFrames": 601
+    },
+    {
+      "id": "sweet",
+      "audio": "ancient/sweet.wav",
+      "audioDuration": 17.74,
+      "durationInFrames": 546
+    },
+    {
+      "id": "mismatch",
+      "audio": "ancient/mismatch.wav",
+      "audioDuration": 15.78,
+      "durationInFrames": 487
+    },
+    {
+      "id": "asintended",
+      "audio": "ancient/asintended.wav",
+      "audioDuration": 19.98,
+      "durationInFrames": 613
+    },
+    {
+      "id": "conclusion",
+      "audio": "ancient/conclusion.wav",
+      "audioDuration": 18.74,
+      "durationInFrames": 576
+    },
+    {
+      "id": "refrigerator",
+      "audio": "ancient/refrigerator.wav",
+      "audioDuration": 23.7,
+      "durationInFrames": 725
+    }
+  ],
+  "totalFrames": 12421
+}

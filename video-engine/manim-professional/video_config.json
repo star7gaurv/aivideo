@@ -1,0 +1,75 @@
+{
+  "title": "सौर ऊर्जा | Solar Energy",
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "duration": 34,
+  "scenes": [
+    {
+      "id": 1,
+      "name": "title",
+      "duration": 4,
+      "narration": "सौर ऊर्जा। सूरज की अपार शक्ति का उपयोग करके हम अपने भविष्य को उज्ज्वल बना सकते हैं।",
+      "layout": "center",
+      "elements": ["sun_animated", "title_text", "subtitle_text"],
+      "colors": {
+        "bg": "#0f172a",
+        "primary": "#fbbf24",
+        "accent": "#10b981"
+      }
+    },
+    {
+      "id": 2,
+      "name": "how_it_works",
+      "duration": 9,
+      "narration": "सोलर पैनल सूरज की किरणों को पकड़ते हैं। इसमें फोटॉन कण होते हैं जो सिलिकॉन सेल में टकराते हैं। यह विद्युत ऊर्जा पैदा करता है।",
+      "layout": "split",
+      "elements": ["sun_left", "solar_panel_center", "photon_animation", "electricity_output", "text_right"],
+      "colors": {
+        "bg": "#0f172a",
+        "sun": "#fbbf24",
+        "panel": "#0369a1",
+        "energy": "#10b981"
+      }
+    },
+    {
+      "id": 3,
+      "name": "benefits",
+      "duration": 8,
+      "narration": "सौर ऊर्जा प्रदूषण मुक्त है, कभी ख़त्म नहीं होती, आपके बिजली बिल को कम करती है, और पृथ्वी को बचाती है।",
+      "layout": "grid_2x2",
+      "elements": ["benefit_1", "benefit_2", "benefit_3", "benefit_4"],
+      "benefits": [
+        {"emoji": "♻️", "text": "प्रदूषण मुक्त", "color": "#10b981"},
+        {"emoji": "⚡", "text": "कभी ख़त्म न हो", "color": "#f59e0b"},
+        {"emoji": "💰", "text": "बिजली बिल कम", "color": "#fbbf24"},
+        {"emoji": "🌍", "text": "पृथ्वी बचाएं", "color": "#3b82f6"}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "stats",
+      "duration": 8,
+      "narration": "भारत में अभी 160 गीगावाट सौर क्षमता स्थापित है। 2030 तक हमारा लक्ष्य 500 गीगावाट है। यह एक बड़ा कदम है नवीकरणीय ऊर्जा की ओर।",
+      "layout": "split",
+      "elements": ["globe_animated", "stat_box_current", "stat_box_target", "growth_arrow"],
+      "stats": {
+        "current": {"value": "160", "unit": "GW", "label": "वर्तमान"},
+        "target": {"value": "500", "unit": "GW", "label": "2030 लक्ष्य"}
+      }
+    },
+    {
+      "id": 5,
+      "name": "cta",
+      "duration": 5,
+      "narration": "आज ही शुरुआत करो। सूरज की शक्ति का उपयोग करके एक स्वच्छ भविष्य बनाओ।",
+      "layout": "center",
+      "elements": ["electricity_animated", "cta_text_1", "cta_text_2"],
+      "colors": {
+        "bg": "#0f172a",
+        "primary": "#fbbf24",
+        "accent": "#10b981"
+      }
+    }
+  ]
+}

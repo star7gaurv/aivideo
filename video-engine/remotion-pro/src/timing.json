@@ -1,0 +1,42 @@
+{
+  "fps": 30,
+  "scenes": [
+    {
+      "id": "hero",
+      "audio": "hero.mp3",
+      "audioDuration": 9.36,
+      "durationInFrames": 299
+    },
+    {
+      "id": "problem",
+      "audio": "problem.mp3",
+      "audioDuration": 9.46,
+      "durationInFrames": 302
+    },
+    {
+      "id": "how",
+      "audio": "how.mp3",
+      "audioDuration": 12.86,
+      "durationInFrames": 404
+    },
+    {
+      "id": "benefits",
+      "audio": "benefits.mp3",
+      "audioDuration": 7.25,
+      "durationInFrames": 235
+    },
+    {
+      "id": "india",
+      "audio": "india.mp3",
+      "audioDuration": 9.67,
+      "durationInFrames": 308
+    },
+    {
+      "id": "cta",
+      "audio": "cta.mp3",
+      "audioDuration": 4.87,
+      "durationInFrames": 164
+    }
+  ],
+  "totalFrames": 1712
+}

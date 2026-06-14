@@ -1,0 +1,36 @@
+{
+  "fps": 30,
+  "scenes": [
+    {
+      "id": "title",
+      "audio": "dream/title.wav",
+      "durationInFrames": 228
+    },
+    {
+      "id": "question",
+      "audio": "dream/question.wav",
+      "durationInFrames": 188
+    },
+    {
+      "id": "memory",
+      "audio": "dream/memory.wav",
+      "durationInFrames": 262
+    },
+    {
+      "id": "creativity",
+      "audio": "dream/creativity.wav",
+      "durationInFrames": 292
+    },
+    {
+      "id": "emotion",
+      "audio": "dream/emotion.wav",
+      "durationInFrames": 218
+    },
+    {
+      "id": "mystery",
+      "audio": "dream/mystery.wav",
+      "durationInFrames": 269
+    }
+  ],
+  "totalFrames": 1457
+}

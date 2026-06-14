@@ -35,3 +35,15 @@ docker/data/
 # Git
 *.orig
 .qodo
+
+# Video engine (Manim / Remotion)
+video-engine/**/node_modules/
+video-engine/**/venv/
+video-engine/**/media/
+video-engine/**/output/
+video-engine/**/proof/
+video-engine/**/frames/
+video-engine/**/__pycache__/
+video-engine/**/*.onnx
+video-engine/**/*.onnx.json
+video-engine/**/*.mp4

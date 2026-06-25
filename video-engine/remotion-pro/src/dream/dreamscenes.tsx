@@ -1,20 +1,34 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
 import { DreamBg, Mascot, float, ramp, sceneFade } from './mascot';
+import { Lightbulb, Star, Sparkle, Telescope, Palette, Heart, GroundShadow } from './props';
 
 type P = { total: number };
 const Wrap: React.FC<{ total: number; children: React.ReactNode }> = ({ total, children }) => {
   const f = useCurrentFrame();
   return <AbsoluteFill style={{ opacity: sceneFade(f, total) }}>{children}</AbsoluteFill>;
 };
-const Cap: React.FC<{ text: string; sub?: string; at?: number; f: number; size?: number; color?: string; light?: boolean }> =
-  ({ text, sub, at = 8, f, size = 60, color = '#1a1a2e', light }) => {
-    const op = ramp(f, at, 24, 0, 1); const ty = ramp(f, at, 28, 24, 0);
+
+// High-contrast caption: white fill + dark outline (paint-order stroke) over a soft bottom scrim.
+// Reads cleanly on light OR dark scenes — replaces the old low-contrast translucent text.
+const Cap: React.FC<{ text: string; sub?: string; at?: number; f: number; size?: number }> =
+  ({ text, sub, at = 8, f, size = 60 }) => {
+    const op = ramp(f, at, 24, 0, 1); const ty = ramp(f, at, 28, 26, 0);
     return (
-      <AbsoluteFill style={{ justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 90 }}>
-        <div style={{ opacity: op, transform: `translateY(${ty}px)`, textAlign: 'center', maxWidth: '80%' }}>
-          <div style={{ fontFamily: 'Inter,sans-serif', fontSize: size, fontWeight: 800, color: light ? '#fff' : color, lineHeight: 1.15, textShadow: light ? '0 4px 20px rgba(0,0,0,0.4)' : 'none' }}>{text}</div>
-          {sub && <div style={{ fontFamily: 'Inter,sans-serif', fontSize: size * 0.5, fontWeight: 500, color: light ? '#d8d0ff' : '#6a6a8a', marginTop: 10 }}>{sub}</div>}
+      <AbsoluteFill style={{ justifyContent: 'flex-end', alignItems: 'center' }}>
+        <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: '32%', background: 'linear-gradient(to top, rgba(18,14,38,0.5), rgba(18,14,38,0))' }} />
+        <div style={{ opacity: op, transform: `translateY(${ty}px)`, textAlign: 'center', maxWidth: '84%', paddingBottom: 78 }}>
+          <div style={{
+            fontFamily: 'Inter,sans-serif', fontSize: size, fontWeight: 900, color: '#ffffff',
+            lineHeight: 1.12, letterSpacing: '-0.5px',
+            WebkitTextStroke: '6px #2b2b3a', paintOrder: 'stroke fill' as any,
+            textShadow: '0 6px 22px rgba(0,0,0,0.45)',
+          }}>{text}</div>
+          {sub && <div style={{
+            fontFamily: 'Inter,sans-serif', fontSize: size * 0.46, fontWeight: 800, color: '#ffe6a8',
+            marginTop: 14, WebkitTextStroke: '4px #2b2b3a', paintOrder: 'stroke fill' as any,
+            textShadow: '0 4px 14px rgba(0,0,0,0.5)',
+          }}>{sub}</div>}
         </div>
       </AbsoluteFill>
     );
@@ -31,7 +45,7 @@ export const title: React.FC<P> = ({ total }) => {
         <DreamBg f={f} W={W} H={H} />
         {/* couch */}
         <g transform={`translate(${W / 2} ${H * 0.6})`}>
-          <ellipse cx={0} cy={200} rx={430} ry={40} fill="#000" opacity={0.06} />
+          <ellipse cx={0} cy={200} rx={430} ry={40} fill="#000" opacity={0.08} />
           <rect x={-390} y={40} width={780} height={150} rx={42} fill="#f0a98e" />
           <rect x={-410} y={-40} width={92} height={210} rx={42} fill="#f0a98e" />
           <rect x={318} y={-40} width={92} height={210} rx={42} fill="#f0a98e" />
@@ -61,12 +75,11 @@ export const question: React.FC<P> = ({ total }) => {
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}><DreamBg f={f} W={W} H={H} hue="#d9ecff" /></svg>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ position: 'absolute' }}>
         {['?', '?', '?'].map((q, i) => {
-          const op = ramp(f, 20 + i * 12, 20, 0, 0.8);
-          return <text key={i} x={W * (0.36 + i * 0.12)} y={H * 0.32 + float(f, 12, 0.06, i)} fontSize={70 + i * 20} fill="#b39ddb" opacity={op} fontFamily="Inter" fontWeight={900}>?</text>;
+          const op = ramp(f, 20 + i * 12, 20, 0, 0.85);
+          return <text key={i} x={W * (0.36 + i * 0.12)} y={H * 0.3 + float(f, 12, 0.06, i)} fontSize={70 + i * 20} fill="#9c7fd6" opacity={op} fontFamily="Inter" fontWeight={900}>?</text>;
         })}
-        <g transform={`translate(${W / 2} ${H * 0.56})`}>
-          <Mascot f={f} x={0} y={0} scale={1.05} expr="curious" lookUp />
-        </g>
+        <GroundShadow x={W / 2} y={H * 0.72} rx={140} ry={28} />
+        <Mascot f={f} x={W / 2} y={H * 0.56} scale={1.05} expr="curious" lookUp />
       </svg>
       <Cap f={f} text="But why do we dream at all?" at={14} size={58} />
     </Wrap>
@@ -98,6 +111,7 @@ export const memory: React.FC<P> = ({ total }) => {
             </g>
           );
         })}
+        <GroundShadow x={W / 2} y={H * 0.82} rx={130} ry={26} />
         <Mascot f={f} x={W / 2} y={H * 0.66} scale={0.9} expr="calm" armsUp />
       </svg>
       <Cap f={f} text="Your brain sorts the day's memories" sub="keeping what matters, letting the rest fade" at={14} size={52} />
@@ -105,27 +119,38 @@ export const memory: React.FC<P> = ({ total }) => {
   );
 };
 
-// 4 — Creativity: superhero flying through ideas
+// 4 — Creativity: mascot flies, connecting hand-drawn ideas (no emoji)
 export const creativity: React.FC<P> = ({ total }) => {
   const f = useCurrentFrame(); const { width: W, height: H } = useVideoConfig();
   const flyX = ramp(f, 0, total, W * 0.25, W * 0.7);
-  const flyY = H * 0.45 + float(f, 30, 0.04);
-  const icons = ['💡', '✨', '🔭', '🎨', '⭐'];
+  const flyY = H * 0.5 + float(f, 30, 0.04);
+  // hand-drawn idea props arranged in a constellation
+  const ideas: { Comp: React.FC<any>; x: number; y: number; d: number }[] = [
+    { Comp: Lightbulb, x: W * 0.2, y: H * 0.26, d: 10 },
+    { Comp: Sparkle, x: W * 0.4, y: H * 0.18, d: 24 },
+    { Comp: Telescope, x: W * 0.7, y: H * 0.2, d: 38 },
+    { Comp: Palette, x: W * 0.83, y: H * 0.36, d: 52 },
+    { Comp: Star, x: W * 0.52, y: H * 0.34, d: 66 },
+  ];
   return (
     <Wrap total={total}>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}><DreamBg f={f} W={W} H={H} hue="#d7ccff" night /></svg>
-      <AbsoluteFill>
-        {icons.map((ic, i) => {
-          const op = ramp(f, 10 + i * 14, 20, 0, 1);
-          return <div key={i} style={{ position: 'absolute', left: `${15 + i * 17}%`, top: `${20 + (i % 3) * 22}%`, fontSize: 64, opacity: op, transform: `translateY(${float(f, 14, 0.05, i)}px)` }}>{ic}</div>;
-        })}
-      </AbsoluteFill>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ position: 'absolute' }}>
+        {/* connector lines from the flying mascot to each idea — "connecting ideas" */}
+        {ideas.map((it, i) => {
+          const op = ramp(f, it.d + 6, 26, 0, 0.5);
+          return <line key={`l${i}`} x1={flyX} y1={flyY} x2={it.x} y2={it.y} stroke="#bda9ff" strokeWidth={3} strokeDasharray="2 10" strokeLinecap="round" opacity={op} />;
+        })}
+        {ideas.map((it, i) => {
+          const op = ramp(f, it.d, 22, 0, 1);
+          const s = ramp(f, it.d, 22, 0.4, 1.1);
+          return <g key={`p${i}`} opacity={op}><it.Comp x={it.x} y={it.y} scale={s} f={f} phase={i} /></g>;
+        })}
         <g transform={`rotate(-6 ${flyX} ${flyY})`}>
-          <Mascot f={f} x={flyX} y={flyY} scale={0.7} expr="happy" cape armsUp />
+          <Mascot f={f} x={flyX} y={flyY} scale={0.72} expr="happy" cape armsUp />
         </g>
       </svg>
-      <Cap f={f} text="Dreams spark creativity" sub="connecting ideas in wild new ways" at={14} size={56} light />
+      <Cap f={f} text="Dreams spark creativity" sub="connecting ideas in wild new ways" at={14} size={56} />
     </Wrap>
   );
 };
@@ -139,18 +164,22 @@ export const emotion: React.FC<P> = ({ total }) => {
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}><DreamBg f={f} W={W} H={H} hue="#ffe9d6" /></svg>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ position: 'absolute' }}>
         {/* storm cloud fading */}
-        <g transform={`translate(${W * 0.36} ${H * 0.3})`} opacity={1 - calm}>
+        <g transform={`translate(${W * 0.36} ${H * 0.26})`} opacity={1 - calm}>
           <ellipse cx={0} cy={0} rx={80} ry={44} fill="#8a90a8" />
           <ellipse cx={60} cy={10} rx={56} ry={32} fill="#8a90a8" />
           <path d="M -10 40 L -24 80 L -4 74 L -18 110" stroke="#f2c14e" strokeWidth={6} fill="none" strokeLinecap="round" />
         </g>
         {/* warm sun appearing */}
-        <g transform={`translate(${W * 0.66} ${H * 0.28}) scale(${calm})`}>
+        <g transform={`translate(${W * 0.66} ${H * 0.24}) scale(${calm})`}>
           <circle r={60} fill="#ffd76a" />
           {Array.from({ length: 10 }).map((_, i) => { const a = (i / 10) * Math.PI * 2; return <line key={i} x1={Math.cos(a) * 72} y1={Math.sin(a) * 72} x2={Math.cos(a) * 96} y2={Math.sin(a) * 96} stroke="#ffd76a" strokeWidth={7} strokeLinecap="round" />; })}
         </g>
-        {/* floating hearts */}
-        {[0, 1, 2].map(i => { const t = ((f + i * 40) % 120) / 120; return <text key={i} x={W * (0.45 + i * 0.05)} y={H * 0.5 - t * 120} fontSize={40} opacity={Math.sin(t * Math.PI) * calm} >❤</text>; })}
+        {/* floating hearts (hand-drawn, not emoji) */}
+        {[0, 1, 2].map(i => {
+          const t = ((f + i * 40) % 120) / 120;
+          return <Heart key={i} x={W * (0.45 + i * 0.05)} y={H * 0.5 - t * 130} scale={0.8} opacity={Math.sin(t * Math.PI) * calm} />;
+        })}
+        <GroundShadow x={W / 2} y={H * 0.82} rx={130} ry={26} />
         <Mascot f={f} x={W / 2} y={H * 0.66} scale={0.95} expr="calm" />
       </svg>
       <Cap f={f} text="They help you process emotions" sub="so you wake up a little lighter" at={14} size={54} />
@@ -167,12 +196,13 @@ export const mystery: React.FC<P> = ({ total }) => {
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}><DreamBg f={f} W={W} H={H} hue="#3a3270" night /></svg>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ position: 'absolute' }}>
         {/* moon */}
-        <circle cx={W * 0.8} cy={H * 0.22} r={56} fill="#fdf6e3" />
-        <circle cx={W * 0.82} cy={H * 0.2} r={48} fill="#1e1840" />
+        <circle cx={W * 0.8} cy={H * 0.2} r={56} fill="#fdf6e3" />
+        <circle cx={W * 0.82} cy={H * 0.18} r={48} fill="#1e1840" />
+        <GroundShadow x={W / 2} y={H * 0.76} rx={130} ry={26} opacity={0.28} />
         <Mascot f={f} x={W / 2} y={H * 0.6} scale={0.95} expr="sleepy" lookUp />
-        {[0, 1, 2].map(i => { const z = zzz(i); return <text key={i} x={W * 0.54 + i * 28} y={H * 0.4 + z.y} fontSize={30 + i * 9} fill="#cdbfff" opacity={z.o} fontFamily="Inter" fontWeight={800}>z</text>; })}
+        {[0, 1, 2].map(i => { const z = zzz(i); return <text key={i} x={W * 0.54 + i * 28} y={H * 0.38 + z.y} fontSize={30 + i * 9} fill="#cdbfff" opacity={z.o} fontFamily="Inter" fontWeight={800}>z</text>; })}
       </svg>
-      <Cap f={f} text="Sweet dreams." sub="one of the mind's deepest mysteries" at={20} size={64} light />
+      <Cap f={f} text="Sweet dreams." sub="one of the mind's deepest mysteries" at={20} size={64} />
     </Wrap>
   );
 };

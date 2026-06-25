@@ -1,0 +1,66 @@
+'use client';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { Video, FolderOpen, LayoutTemplate, LogOut, Plus } from 'lucide-react';
+
+const navItems = [
+  { href: '/dashboard/projects',  label: 'Projects',   icon: FolderOpen },
+  { href: '/dashboard/templates', label: 'Templates',  icon: LayoutTemplate },
+];
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const router   = useRouter();
+
+  useEffect(() => {
+    if (!localStorage.getItem('aivideo_token')) router.replace('/login');
+  }, [router]);
+
+  const signOut = () => {
+    localStorage.removeItem('aivideo_token');
+    router.replace('/login');
+  };
+
+  return (
+    <div className="flex min-h-screen">
+      {/* Sidebar */}
+      <aside className="w-56 shrink-0 bg-zinc-900 border-r border-zinc-800 flex flex-col">
+        <div className="p-4 flex items-center gap-2 border-b border-zinc-800">
+          <div className="h-8 w-8 bg-violet-600 rounded-lg flex items-center justify-center">
+            <Video className="h-4 w-4 text-white" />
+          </div>
+          <span className="font-semibold text-zinc-100 text-sm">AI Video Studio</span>
+        </div>
+
+        <nav className="flex-1 p-3 space-y-1">
+          <Link
+            href="/dashboard/projects/new"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium mb-3 transition-colors"
+          >
+            <Plus className="h-4 w-4" /> New Video
+          </Link>
+          {navItems.map(({ href, label, icon: Icon }) => (
+            <Link
+              key={href} href={href}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${pathname.startsWith(href) ? 'bg-zinc-800 text-zinc-100' : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'}`}
+            >
+              <Icon className="h-4 w-4" />{label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="p-3 border-t border-zinc-800">
+          <button onClick={signOut} className="flex items-center gap-2 px-3 py-2 w-full rounded-lg text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors">
+            <LogOut className="h-4 w-4" /> Sign out
+          </button>
+        </div>
+      </aside>
+
+      {/* Main */}
+      <main className="flex-1 overflow-auto bg-zinc-950 p-6">
+        {children}
+      </main>
+    </div>
+  );
+}

@@ -24,3 +24,35 @@ Wave::api();
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/posts', '\App\Http\Controllers\Api\ApiController@posts');
 });
+
+// V1 API — creator platform
+Route::prefix('v1')->middleware('auth:api')->group(function () {
+    Route::apiResource('projects', \App\Http\Controllers\Api\ProjectController::class);
+    Route::get('templates', [\App\Http\Controllers\Api\TemplateController::class, 'index']);
+    Route::get('music', [\App\Http\Controllers\Api\MusicController::class, 'index']);
+    Route::post('music/generate', [\App\Http\Controllers\Api\MusicController::class, 'generate']);
+    Route::get('images', [\App\Http\Controllers\Api\ImageController::class, 'index']);
+    Route::post('images/generate', [\App\Http\Controllers\Api\ImageController::class, 'generate']);
+    Route::post('video/render', [\App\Http\Controllers\Api\VideoRenderController::class, 'render']);
+    Route::get('video/render/{id}/status', [\App\Http\Controllers\Api\VideoRenderController::class, 'status']);
+    Route::post('tts/generate', [\App\Http\Controllers\Api\TtsController::class, 'generate']);
+    Route::get('tts/voices', [\App\Http\Controllers\Api\TtsController::class, 'voices']);
+    Route::post('avatars', [\App\Http\Controllers\Api\AvatarController::class, 'generate']);
+    Route::get('avatars', [\App\Http\Controllers\Api\AvatarController::class, 'index']);
+    Route::get('avatars/{id}/status', [\App\Http\Controllers\Api\AvatarController::class, 'status']);
+
+    // Social platform connections
+    Route::get('social/accounts', [\App\Http\Controllers\Api\SocialController::class, 'accounts']);
+    Route::get('social/connect/{platform}', [\App\Http\Controllers\Api\SocialController::class, 'connect']);
+    Route::delete('social/{platform}', [\App\Http\Controllers\Api\SocialController::class, 'disconnect']);
+
+    // Publishing
+    Route::post('publish', [\App\Http\Controllers\Api\PublishController::class, 'publish']);
+    Route::get('publish', [\App\Http\Controllers\Api\PublishController::class, 'index']);
+    Route::get('publish/{id}/status', [\App\Http\Controllers\Api\PublishController::class, 'status']);
+});
+
+// OAuth callback — must be web-accessible (no JWT auth, uses session state)
+Route::get('social/callback/{platform}', [\App\Http\Controllers\Api\SocialController::class, 'callback'])
+    ->middleware('auth:api')
+    ->name('social.callback');

@@ -14,35 +14,51 @@ const blink = (f: number) => (f % 75 < 4 ? 0.1 : 1);
 
 type Expr = 'sleepy' | 'curious' | 'happy' | 'calm' | 'wow';
 
-export const DreamBg: React.FC<{ f: number; W: number; H: number; hue?: string; night?: boolean }> = ({
-  f, W, H, hue = '#e7d9ff', night = false,
-}) => (
-  <>
-    <defs>
-      <radialGradient id="dhalo" cx="50%" cy="45%" r="60%">
-        <stop offset="0%" stopColor="#fff4fb" />
-        <stop offset="45%" stopColor="#d9e8ff" />
-        <stop offset="75%" stopColor={hue} />
-        <stop offset="100%" stopColor={night ? '#2a2350' : '#ffffff'} stopOpacity={night ? 1 : 0} />
-      </radialGradient>
-    </defs>
-    <rect width={W} height={H} fill={night ? '#1e1840' : '#ffffff'} />
-    <circle cx={W / 2} cy={H * 0.46} r={W * 0.46} fill="url(#dhalo)" />
-    {Array.from({ length: 26 }).map((_, i) => {
-      const x = (i * 173) % W;
-      const y = (i * 251) % (H * 0.92);
-      const tw = 0.25 + (Math.sin(f * 0.08 + i) + 1) * 0.35;
-      return <circle key={i} cx={x} cy={y} r={2 + (i % 3)} fill={night ? '#cdbfff' : '#c9a0ff'} opacity={tw} />;
-    })}
-    {[[0.2, 0.22, 0.8], [0.8, 0.2, 0.7], [0.13, 0.6, 0.6], [0.88, 0.62, 0.7]].map(([cx, cy, s], i) => (
-      <g key={i} transform={`translate(${W * cx + float(f, 12, 0.02, i)} ${H * cy}) scale(${s})`} opacity={night ? 0.25 : 0.95}>
-        <ellipse cx={0} cy={0} rx={60} ry={30} fill="#fff" />
-        <ellipse cx={46} cy={8} rx={42} ry={23} fill="#fff" />
-        <ellipse cx={-44} cy={10} rx={38} ry={21} fill="#fff" />
-      </g>
-    ))}
-  </>
-);
+export const DreamBg: React.FC<{ f: number; W: number; H: number; hue?: string; night?: boolean; ground?: boolean }> = ({
+  f, W, H, hue = '#e7d9ff', night = false, ground = true,
+}) => {
+  const horizon = H * 0.74;
+  return (
+    <>
+      <defs>
+        <radialGradient id="dhalo" cx="50%" cy="42%" r="62%">
+          <stop offset="0%" stopColor="#fff4fb" />
+          <stop offset="45%" stopColor="#d9e8ff" />
+          <stop offset="75%" stopColor={hue} />
+          <stop offset="100%" stopColor={night ? '#2a2350' : '#ffffff'} stopOpacity={night ? 1 : 0} />
+        </radialGradient>
+        <linearGradient id="dground" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={night ? '#3b3470' : '#efe6ff'} />
+          <stop offset="100%" stopColor={night ? '#272150' : '#dfd0fb'} />
+        </linearGradient>
+      </defs>
+      <rect width={W} height={H} fill={night ? '#1e1840' : '#ffffff'} />
+      <circle cx={W / 2} cy={H * 0.46} r={W * 0.46} fill="url(#dhalo)" />
+      {Array.from({ length: 26 }).map((_, i) => {
+        const x = (i * 173) % W;
+        const y = (i * 251) % (H * 0.7);
+        const tw = 0.25 + (Math.sin(f * 0.08 + i) + 1) * 0.35;
+        return <circle key={i} cx={x} cy={y} r={2 + (i % 3)} fill={night ? '#cdbfff' : '#c9a0ff'} opacity={tw} />;
+      })}
+      {[[0.2, 0.2, 0.8], [0.8, 0.18, 0.7], [0.13, 0.5, 0.6], [0.88, 0.52, 0.7]].map(([cx, cy, s], i) => (
+        <g key={i} transform={`translate(${W * cx + float(f, 12, 0.02, i)} ${H * cy}) scale(${s})`} opacity={night ? 0.25 : 0.95}>
+          <ellipse cx={0} cy={0} rx={60} ry={30} fill="#fff" />
+          <ellipse cx={46} cy={8} rx={42} ry={23} fill="#fff" />
+          <ellipse cx={-44} cy={10} rx={38} ry={21} fill="#fff" />
+        </g>
+      ))}
+      {/* layered horizon hills give depth so characters read as standing on a floor, not in a void */}
+      {ground && (
+        <>
+          <path d={`M 0 ${horizon} Q ${W * 0.28} ${horizon - 70} ${W * 0.55} ${horizon - 18} Q ${W * 0.8} ${horizon + 30} ${W} ${horizon - 24} L ${W} ${H} L 0 ${H} Z`}
+            fill={night ? '#322b62' : '#e9ddff'} opacity={0.7} />
+          <path d={`M 0 ${horizon + 40} Q ${W * 0.4} ${horizon - 6} ${W} ${horizon + 30} L ${W} ${H} L 0 ${H} Z`}
+            fill="url(#dground)" />
+        </>
+      )}
+    </>
+  );
+};
 
 // Upright round mascot. cx,cy = center of head area.
 export const Mascot: React.FC<{
@@ -95,7 +111,6 @@ export const Mascot: React.FC<{
       {armsUp ? (
         <>
           <path d="M -78 0 Q -110 -50 -86 -78" stroke="#fdfdfd" strokeWidth={22} fill="none" strokeLinecap="round" />
-          <path d="M -78 0 Q -110 -50 -86 -78" stroke="#2b2b3a" strokeWidth={6} fill="none" strokeLinecap="round" opacity={0} />
           <path d="M 78 0 Q 110 -50 86 -78" stroke="#fdfdfd" strokeWidth={22} fill="none" strokeLinecap="round" />
         </>
       ) : (

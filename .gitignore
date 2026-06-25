@@ -36,6 +36,9 @@ docker/data/
 *.orig
 .qodo
 
+# Claude Code session memory (stored in ~/.claude, not the repo)
+aivideo_memory/
+
 # Video engine (Manim / Remotion)
 video-engine/**/node_modules/
 video-engine/**/venv/
@@ -47,3 +50,6 @@ video-engine/**/__pycache__/
 video-engine/**/*.onnx
 video-engine/**/*.onnx.json
 video-engine/**/*.mp4
+video-engine/tools/
+video-engine/reference/
+video-engine/**/verify/

@@ -33,6 +33,52 @@ return [
 
     'sparkpost' => [
         'secret' => env('SPARKPOST_SECRET'),
-    ]
+    ],
+
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+    ],
+
+    'mubert' => [
+        'token' => env('MUBERT_API_KEY'),
+    ],
+
+    'huggingface' => [
+        'token' => env('HF_TOKEN'),
+    ],
+
+    'cloudflare' => [
+        'account_id' => env('CLOUDFLARE_ACCOUNT_ID'),
+        'ai_token'   => env('CLOUDFLARE_AI_TOKEN'),
+    ],
+
+    'video_engine' => [
+        'path' => env('VIDEO_ENGINE_PATH', base_path('../video-engine/remotion-pro')),
+    ],
+
+    'ffmpeg' => [
+        'path' => env('FFMPEG_PATH', 'ffmpeg'),
+    ],
+
+    'piper' => [
+        'cmd'        => env('PIPER_CMD', 'python3 -m piper'),
+        'voice_path' => env('PIPER_VOICE_PATH'),
+    ],
+
+    'sadtalker' => [
+        'space' => env('SADTALKER_SPACE', 'vinthony/SadTalker'),
+    ],
+
+    'google' => [
+        'client_id'     => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect'      => env('GOOGLE_REDIRECT_URI'),
+    ],
+
+    'facebook' => [
+        'client_id'     => env('FACEBOOK_APP_ID'),
+        'client_secret' => env('FACEBOOK_APP_SECRET'),
+        'redirect'      => env('FACEBOOK_REDIRECT_URI'),
+    ],
 
 ];

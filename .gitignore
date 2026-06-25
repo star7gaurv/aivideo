@@ -8,6 +8,7 @@
 **/vendor/
 **/.env
 **/.env.*
+!**/.env.example
 **/storage/*.key
 **/storage/app/public/
 **/storage/debugbar/

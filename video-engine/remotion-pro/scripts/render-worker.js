@@ -51,29 +51,39 @@ const laravelPublicStorage = process.env.LARAVEL_STORAGE_PUBLIC
   || path.resolve(engineRoot, '../../backend/storage/app/public');
 
 /**
- * Copy avatar MP4s (and any other storage-relative asset paths on scenes)
- * into remotion-pro/public/ so staticFile() can serve them.
- * Skips if the file is already in place or the source doesn't exist.
+ * Copy a storage-relative asset from laravel public storage into remotion-pro/public/
+ * so staticFile() can serve it. Skips if already staged or source missing.
+ */
+function stageAsset(relativePath) {
+  if (!relativePath) return false;
+  const dest = path.join(engineRoot, 'public', relativePath);
+  if (fs.existsSync(dest)) return true; // already staged
+  const src = path.join(laravelPublicStorage, relativePath);
+  if (!fs.existsSync(src)) {
+    console.error(`[Stage] Source not found, skipping: ${src}`);
+    return false;
+  }
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.copyFileSync(src, dest);
+  console.error(`[Stage] Staged: ${relativePath}`);
+  return true;
+}
+
+/**
+ * Copy avatar MP4s from laravel storage into remotion-pro/public/.
  */
 function stageAvatarAssets(scenes) {
   if (!Array.isArray(scenes)) return;
+  scenes.forEach((scene) => stageAsset(scene.avatarVideoPath));
+}
 
-  scenes.forEach((scene) => {
-    if (!scene.avatarVideoPath) return;
-
-    const dest = path.join(engineRoot, 'public', scene.avatarVideoPath);
-    if (fs.existsSync(dest)) return; // already staged
-
-    const src = path.join(laravelPublicStorage, scene.avatarVideoPath);
-    if (!fs.existsSync(src)) {
-      console.error(`[Avatar] Source not found, skipping: ${src}`);
-      return;
-    }
-
-    fs.mkdirSync(path.dirname(dest), { recursive: true });
-    fs.copyFileSync(src, dest);
-    console.error(`[Avatar] Staged: ${scene.avatarVideoPath}`);
-  });
+/**
+ * Copy pre-existing narration WAVs (generated via dashboard) from laravel storage
+ * into remotion-pro/public/ so staticFile() can serve them during renderMedia().
+ */
+function stageNarrationAssets(scenes) {
+  if (!Array.isArray(scenes)) return;
+  scenes.forEach((scene) => stageAsset(scene.narrationAudioPath));
 }
 
 /**
@@ -131,9 +141,14 @@ async function main() {
 
     process.stdout.write('PROGRESS:5\n');
 
-    // Auto-generate TTS for scenes missing audio
+    // Auto-generate TTS for scenes missing audio (outputs into remotion-pro/public/tts/)
     if (props.scenes && props.projectId) {
       runTts(props.scenes, props.projectId);
+    }
+
+    // Stage pre-existing narration WAVs from Laravel storage into remotion-pro/public/
+    if (props.scenes) {
+      stageNarrationAssets(props.scenes);
     }
 
     // Stage avatar videos into public/ so staticFile() can find them

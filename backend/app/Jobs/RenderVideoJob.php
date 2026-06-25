@@ -98,10 +98,13 @@ class RenderVideoJob implements ShouldQueue
             return;
         }
 
-        // Move output to public storage
+        // render-worker already wrote to the public storage path directly,
+        // so just verify the file exists — no copy needed
         $publicPath = "renders/{$job->user_id}/{$job->id}.mp4";
-        Storage::disk('public')->put($publicPath, file_get_contents($outputFile));
-        @unlink($outputFile);
+        if (!file_exists($outputFile)) {
+            $this->fail($job, $project, 'Output MP4 not found after render');
+            return;
+        }
 
         $outputUrl = Storage::disk('public')->url($publicPath);
 

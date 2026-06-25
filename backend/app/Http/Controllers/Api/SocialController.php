@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\SocialAccount;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 
 class SocialController extends Controller
@@ -28,10 +29,17 @@ class SocialController extends Controller
     {
         $redirectUri = route('social.callback', $platform);
 
+        // Encrypt user_id into state so the callback can identify the user
+        // without requiring a JWT (the redirect from Google/Facebook won't have one)
+        $state = Crypt::encryptString(json_encode([
+            'user_id' => auth()->id(),
+            'ts'      => time(),
+        ]));
+
         $url = match ($platform) {
-            'youtube' => $this->youtubeAuthUrl($redirectUri),
-            'instagram' => $this->instagramAuthUrl($redirectUri),
-            default => abort(422, "Unsupported platform: {$platform}"),
+            'youtube'   => $this->youtubeAuthUrl($redirectUri, $state),
+            'instagram' => $this->instagramAuthUrl($redirectUri, $state),
+            default     => abort(422, "Unsupported platform: {$platform}"),
         };
 
         return response()->json(['url' => $url]);
@@ -39,14 +47,32 @@ class SocialController extends Controller
 
     /**
      * OAuth callback — exchange code for tokens, store, close popup.
+     * No JWT auth: user identity comes from the encrypted state= parameter.
      */
     public function callback(string $platform, Request $request)
     {
         $code        = $request->query('code');
+        $stateRaw    = $request->query('state', '');
         $redirectUri = route('social.callback', $platform);
 
-        if (!$code) {
-            return response('<script>window.close();</script>', 400)->header('Content-Type', 'text/html');
+        $closeWithError = fn(string $msg) => response(
+            "<script>window.opener?.postMessage({error:" . json_encode($msg) . "},'*');window.close();</script>",
+            400
+        )->header('Content-Type', 'text/html');
+
+        if (!$code || !$stateRaw) {
+            return $closeWithError('Missing code or state.');
+        }
+
+        // Decode and verify state
+        try {
+            $state  = json_decode(Crypt::decryptString($stateRaw), true);
+            $userId = $state['user_id'] ?? null;
+            if (!$userId || (time() - ($state['ts'] ?? 0)) > 600) {
+                return $closeWithError('State expired or invalid.');
+            }
+        } catch (\Throwable) {
+            return $closeWithError('Invalid state parameter.');
         }
 
         try {
@@ -56,18 +82,14 @@ class SocialController extends Controller
                 default     => throw new \InvalidArgumentException("Unknown platform"),
             };
         } catch (\Throwable $e) {
-            return response(
-                "<script>window.opener?.postMessage({error:'" . addslashes($e->getMessage()) . "'},'*');window.close();</script>",
-                400
-            )->header('Content-Type', 'text/html');
+            return $closeWithError($e->getMessage());
         }
 
         SocialAccount::updateOrCreate(
-            ['user_id' => auth()->id(), 'platform' => $platform],
+            ['user_id' => $userId, 'platform' => $platform],
             $tokens
         );
 
-        // Close the popup and notify the parent window
         return response(
             "<script>window.opener?.postMessage({success:true,platform:'{$platform}'},'*');window.close();</script>"
         )->header('Content-Type', 'text/html');
@@ -87,7 +109,7 @@ class SocialController extends Controller
 
     // ── OAuth helpers ──────────────────────────────────────────────────────────
 
-    private function youtubeAuthUrl(string $redirectUri): string
+    private function youtubeAuthUrl(string $redirectUri, string $state): string
     {
         $params = http_build_query([
             'client_id'     => config('services.google.client_id'),
@@ -96,6 +118,7 @@ class SocialController extends Controller
             'scope'         => 'https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube.readonly',
             'access_type'   => 'offline',
             'prompt'        => 'consent',
+            'state'         => $state,
         ]);
         return "https://accounts.google.com/o/oauth2/v2/auth?{$params}";
     }
@@ -130,13 +153,14 @@ class SocialController extends Controller
         ];
     }
 
-    private function instagramAuthUrl(string $redirectUri): string
+    private function instagramAuthUrl(string $redirectUri, string $state): string
     {
         $params = http_build_query([
             'client_id'     => config('services.facebook.client_id'),
             'redirect_uri'  => $redirectUri,
             'response_type' => 'code',
             'scope'         => 'instagram_basic,instagram_content_publish,pages_read_engagement',
+            'state'         => $state,
         ]);
         return "https://www.facebook.com/v19.0/dialog/oauth?{$params}";
     }

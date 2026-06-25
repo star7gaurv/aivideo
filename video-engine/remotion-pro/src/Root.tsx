@@ -8,13 +8,11 @@ import { DreamProof } from './dream/DreamProof';
 import { DreamFilm } from './dream/DreamFilm';
 import dreamTiming from './dream-timing.json';
 import { ShortFilm } from './ShortFilm/ShortFilm';
-import { defaultShortFilmProps } from './ShortFilm/props';
+import { defaultShortFilmProps, ShortFilmProps } from './ShortFilm/props';
 import { AdFilm } from './AdFilm/AdFilm';
 import { defaultAdFilmProps } from './AdFilm/props';
 
 export const RemotionRoot: React.FC = () => {
-  const shortDuration = defaultShortFilmProps.scenes!.reduce((s, sc) => s + sc.durationInFrames, 0);
-
   return (
     <>
       <Composition
@@ -52,11 +50,17 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="ShortFilm"
         component={ShortFilm}
-        durationInFrames={shortDuration}
+        durationInFrames={defaultShortFilmProps.scenes!.reduce((s, sc) => s + sc.durationInFrames, 0)}
         fps={30}
         width={1080}
         height={1920}
         defaultProps={defaultShortFilmProps}
+        calculateMetadata={({ props }: { props: ShortFilmProps }) => ({
+          durationInFrames: (props.scenes ?? defaultShortFilmProps.scenes!).reduce(
+            (s, sc) => s + (sc.durationInFrames || 90),
+            0
+          ),
+        })}
       />
       <Composition
         id="AdFilm"

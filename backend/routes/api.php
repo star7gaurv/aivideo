@@ -52,7 +52,7 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::get('publish/{id}/status', [\App\Http\Controllers\Api\PublishController::class, 'status']);
 });
 
-// OAuth callback — must be web-accessible (no JWT auth, uses session state)
+// OAuth callback — no JWT auth (Google/Facebook redirect won't include it)
+// User identity carried via encrypted state= param set in connect()
 Route::get('social/callback/{platform}', [\App\Http\Controllers\Api\SocialController::class, 'callback'])
-    ->middleware('auth:api')
     ->name('social.callback');

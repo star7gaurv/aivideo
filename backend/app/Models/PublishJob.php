@@ -17,6 +17,7 @@ class PublishJob extends Model
         'published_at' => 'datetime',
     ];
 
-    public function user(): BelongsTo    { return $this->belongsTo(User::class); }
-    public function project(): BelongsTo { return $this->belongsTo(Project::class); }
+    public function user(): BelongsTo      { return $this->belongsTo(User::class); }
+    public function project(): BelongsTo   { return $this->belongsTo(Project::class); }
+    public function renderJob(): BelongsTo { return $this->belongsTo(RenderJob::class); }
 }

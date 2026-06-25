@@ -22,11 +22,11 @@ interface Props {
 }
 
 export function ProjectWizard({ initialStep = 0 }: Props) {
-  const [step, setStep] = useState(initialStep);
-  const StepComponent   = STEPS[step].component;
+  const [step, setStep]         = useState(initialStep);
+  const { format, templateId }  = useProjectStore();
+  const StepComponent           = STEPS[step].component;
 
   const canProceed = () => {
-    const { format, templateId } = useProjectStore.getState();
     if (step === 0) return !!format;
     if (step === 1) return !!templateId;
     return true;

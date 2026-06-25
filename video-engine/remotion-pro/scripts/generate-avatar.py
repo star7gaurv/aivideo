@@ -21,7 +21,7 @@ import sys, os, json, argparse, shutil, tempfile
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--face-image", required=True, help="Path to face image (JPG/PNG)")
-    p.add_argument("--audio",      required=True, help="Path to audio WAV/MP3")
+    p.add_argument("--audio",      default=None,  help="Path to audio WAV/MP3 (optional — silent fallback used if omitted)")
     p.add_argument("--output",     required=True, help="Output MP4 path")
     p.add_argument("--space",      default="vinthony/SadTalker", help="HF Space slug")
     p.add_argument("--still",      action="store_true", help="Still mode (less head movement)")
@@ -48,7 +48,20 @@ def main():
         print(json.dumps({"error": f"Face image not found: {args.face_image}"}))
         sys.exit(1)
 
-    if not os.path.exists(args.audio):
+    # If no audio provided, generate a 3-second silent WAV so SadTalker still works
+    _tmp_audio = None
+    if not args.audio:
+        import wave, struct
+        _tmp = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+        _tmp_audio = _tmp.name
+        sample_rate, duration = 22050, 3
+        with wave.open(_tmp_audio, 'w') as wf:
+            wf.setnchannels(1)
+            wf.setsampwidth(2)
+            wf.setframerate(sample_rate)
+            wf.writeframes(struct.pack('<' + 'h' * (sample_rate * duration), *([0] * sample_rate * duration)))
+        args.audio = _tmp_audio
+    elif not os.path.exists(args.audio):
         print(json.dumps({"error": f"Audio file not found: {args.audio}"}))
         sys.exit(1)
 
@@ -69,14 +82,14 @@ def main():
         result = client.predict(
             handle_file(args.face_image),   # source_image
             handle_file(args.audio),         # driven_audio
-            "crop",                          # preprocess
-            True,                            # still_mode
-            True,                            # use_enhancer (GFPGAN for quality)
+            args.preprocess,                 # preprocess
+            args.still,                      # still_mode
+            True,                            # use_enhancer (GFPGAN)
             512,                             # batch_size
             256,                             # size_of_image
             0,                               # pose_style
             "full",                          # facerender
-            False,                           # exp_scale (not all spaces have this)
+            False,                           # exp_scale
             api_name="/test"
         )
 
@@ -104,6 +117,10 @@ def main():
     # Copy to desired output location
     os.makedirs(os.path.dirname(args.output), exist_ok=True)
     shutil.copy2(str(output_path), args.output)
+
+    if _tmp_audio:
+        try: os.unlink(_tmp_audio)
+        except: pass
 
     duration = get_video_duration(args.output)
     print(f"[Avatar] Done → {args.output} ({duration:.1f}s)" if duration else f"[Avatar] Done → {args.output}", file=sys.stderr)

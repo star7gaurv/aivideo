@@ -9,55 +9,48 @@ class MusicTrackSeeder extends Seeder
 {
     public function run(): void
     {
+        // All tracks: Kevin MacLeod (incompetech.com), licensed CC-BY 4.0.
         $tracks = [
-            // UPBEAT
-            ['title' => 'Energetic Corporate Loop',    'artist' => 'Mixkit',   'mood' => 'upbeat',        'source' => 'mixkit',  'duration_seconds' => 120, 'file_path' => 'music/upbeat/mixkit-energetic-corporate-loop.mp3'],
-            ['title' => 'Bright Morning',              'artist' => 'Pixabay',  'mood' => 'upbeat',        'source' => 'pixabay', 'duration_seconds' => 90,  'file_path' => 'music/upbeat/pixabay-bright-morning.mp3'],
-            ['title' => 'Happy Pop Groove',            'artist' => 'Mixkit',   'mood' => 'upbeat',        'source' => 'mixkit',  'duration_seconds' => 105, 'file_path' => 'music/upbeat/mixkit-happy-pop-groove.mp3'],
-            ['title' => 'Motivational Beats',          'artist' => 'Pixabay',  'mood' => 'upbeat',        'source' => 'pixabay', 'duration_seconds' => 130, 'file_path' => 'music/upbeat/pixabay-motivational-beats.mp3'],
-            ['title' => 'Fun Summer Vibes',            'artist' => 'Mixkit',   'mood' => 'upbeat',        'source' => 'mixkit',  'duration_seconds' => 95,  'file_path' => 'music/upbeat/mixkit-fun-summer-vibes.mp3'],
-
-            // CALM
-            ['title' => 'Soft Piano Breeze',           'artist' => 'Mixkit',   'mood' => 'calm',          'source' => 'mixkit',  'duration_seconds' => 150, 'file_path' => 'music/calm/mixkit-soft-piano-breeze.mp3'],
-            ['title' => 'Peaceful Meditation',         'artist' => 'Pixabay',  'mood' => 'calm',          'source' => 'pixabay', 'duration_seconds' => 180, 'file_path' => 'music/calm/pixabay-peaceful-meditation.mp3'],
-            ['title' => 'Gentle Acoustic',             'artist' => 'Mixkit',   'mood' => 'calm',          'source' => 'mixkit',  'duration_seconds' => 120, 'file_path' => 'music/calm/mixkit-gentle-acoustic.mp3'],
-            ['title' => 'Ambient Flow',                'artist' => 'Pixabay',  'mood' => 'calm',          'source' => 'pixabay', 'duration_seconds' => 200, 'file_path' => 'music/calm/pixabay-ambient-flow.mp3'],
-            ['title' => 'Serene Strings',              'artist' => 'Mixkit',   'mood' => 'calm',          'source' => 'mixkit',  'duration_seconds' => 135, 'file_path' => 'music/calm/mixkit-serene-strings.mp3'],
-
-            // DRAMATIC
-            ['title' => 'Epic Cinematic Rise',         'artist' => 'Pixabay',  'mood' => 'dramatic',      'source' => 'pixabay', 'duration_seconds' => 90,  'file_path' => 'music/dramatic/pixabay-epic-cinematic-rise.mp3'],
-            ['title' => 'Tense Documentary Score',     'artist' => 'Mixkit',   'mood' => 'dramatic',      'source' => 'mixkit',  'duration_seconds' => 110, 'file_path' => 'music/dramatic/mixkit-tense-documentary-score.mp3'],
-            ['title' => 'Orchestral Power',            'artist' => 'Pixabay',  'mood' => 'dramatic',      'source' => 'pixabay', 'duration_seconds' => 120, 'file_path' => 'music/dramatic/pixabay-orchestral-power.mp3'],
-            ['title' => 'Dark Thriller',               'artist' => 'Mixkit',   'mood' => 'dramatic',      'source' => 'mixkit',  'duration_seconds' => 100, 'file_path' => 'music/dramatic/mixkit-dark-thriller.mp3'],
-            ['title' => 'Suspense Build',              'artist' => 'Pixabay',  'mood' => 'dramatic',      'source' => 'pixabay', 'duration_seconds' => 85,  'file_path' => 'music/dramatic/pixabay-suspense-build.mp3'],
-
-            // CORPORATE
-            ['title' => 'Professional Presentation',   'artist' => 'Pixabay',  'mood' => 'corporate',     'source' => 'pixabay', 'duration_seconds' => 140, 'file_path' => 'music/corporate/pixabay-professional-presentation.mp3'],
-            ['title' => 'Business Innovation',         'artist' => 'Mixkit',   'mood' => 'corporate',     'source' => 'mixkit',  'duration_seconds' => 125, 'file_path' => 'music/corporate/mixkit-business-innovation.mp3'],
-            ['title' => 'Clean Corporate Tech',        'artist' => 'Pixabay',  'mood' => 'corporate',     'source' => 'pixabay', 'duration_seconds' => 115, 'file_path' => 'music/corporate/pixabay-clean-corporate-tech.mp3'],
-            ['title' => 'Success Story',               'artist' => 'Mixkit',   'mood' => 'corporate',     'source' => 'mixkit',  'duration_seconds' => 100, 'file_path' => 'music/corporate/mixkit-success-story.mp3'],
-            ['title' => 'Modern Minimal',              'artist' => 'Pixabay',  'mood' => 'corporate',     'source' => 'pixabay', 'duration_seconds' => 130, 'file_path' => 'music/corporate/pixabay-modern-minimal.mp3'],
-
-            // CHILL
-            ['title' => 'Lo-Fi Study Beats',           'artist' => 'Pixabay',  'mood' => 'chill',         'source' => 'pixabay', 'duration_seconds' => 180, 'file_path' => 'music/chill/pixabay-lofi-study-beats.mp3'],
-            ['title' => 'Coffee House Jazz',           'artist' => 'Mixkit',   'mood' => 'chill',         'source' => 'mixkit',  'duration_seconds' => 150, 'file_path' => 'music/chill/mixkit-coffee-house-jazz.mp3'],
-            ['title' => 'Sunset Groove',               'artist' => 'Pixabay',  'mood' => 'chill',         'source' => 'pixabay', 'duration_seconds' => 165, 'file_path' => 'music/chill/pixabay-sunset-groove.mp3'],
-            ['title' => 'Easy Listening',              'artist' => 'Mixkit',   'mood' => 'chill',         'source' => 'mixkit',  'duration_seconds' => 140, 'file_path' => 'music/chill/mixkit-easy-listening.mp3'],
-            ['title' => 'Mellow Afternoon',            'artist' => 'Pixabay',  'mood' => 'chill',         'source' => 'pixabay', 'duration_seconds' => 175, 'file_path' => 'music/chill/pixabay-mellow-afternoon.mp3'],
-
-            // INSPIRATIONAL
-            ['title' => 'Rise and Shine',              'artist' => 'Pixabay',  'mood' => 'inspirational', 'source' => 'pixabay', 'duration_seconds' => 120, 'file_path' => 'music/inspirational/pixabay-rise-and-shine.mp3'],
-            ['title' => 'Dream Big',                   'artist' => 'Mixkit',   'mood' => 'inspirational', 'source' => 'mixkit',  'duration_seconds' => 110, 'file_path' => 'music/inspirational/mixkit-dream-big.mp3'],
-            ['title' => 'Hopeful Journey',             'artist' => 'Pixabay',  'mood' => 'inspirational', 'source' => 'pixabay', 'duration_seconds' => 145, 'file_path' => 'music/inspirational/pixabay-hopeful-journey.mp3'],
-            ['title' => 'Uplifting Triumph',           'artist' => 'Mixkit',   'mood' => 'inspirational', 'source' => 'mixkit',  'duration_seconds' => 130, 'file_path' => 'music/inspirational/mixkit-uplifting-triumph.mp3'],
-            ['title' => 'New Beginnings',              'artist' => 'Pixabay',  'mood' => 'inspirational', 'source' => 'pixabay', 'duration_seconds' => 155, 'file_path' => 'music/inspirational/pixabay-new-beginnings.mp3'],
+            // upbeat
+            ['Carefree', 'upbeat', 'carefree.mp3', 209],
+            ['Fluffing a Duck', 'upbeat', 'fluffing-a-duck.mp3', 86],
+            ['Monkeys Spinning Monkeys', 'upbeat', 'monkeys-spinning-monkeys.mp3', 132],
+            ['Itty Bitty 8 Bit', 'upbeat', 'itty-bitty-8-bit.mp3', 102],
+            // calm
+            ['Pamgaea', 'calm', 'pamgaea.mp3', 224],
+            ['Local Forecast (Elevator)', 'calm', 'local-forecast-elevator.mp3', 175],
+            ['Wholesome', 'calm', 'wholesome.mp3', 138],
+            // dramatic
+            ['Heroic Age', 'dramatic', 'heroic-age.mp3', 154],
+            ['Darkest Child', 'dramatic', 'darkest-child.mp3', 230],
+            ['Long Note Three', 'dramatic', 'long-note-three.mp3', 180],
+            // corporate
+            ['Inspired', 'corporate', 'inspired.mp3', 173],
+            ['The Builder', 'corporate', 'the-builder.mp3', 120],
+            ['Wallpaper', 'corporate', 'wallpaper.mp3', 100],
+            // chill
+            ['Lobby Time', 'chill', 'lobby-time.mp3', 121],
+            ['Bossa Antigua', 'chill', 'bossa-antigua.mp3', 222],
+            ['Sneaky Snitch', 'chill', 'sneaky-snitch.mp3', 154],
+            // inspirational
+            ['Rising Tide', 'inspirational', 'rising-tide.mp3', 130],
+            ['Hero Theme', 'inspirational', 'hero-theme.mp3', 156],
+            ['New Friendly', 'inspirational', 'new-friendly.mp3', 110],
+            ['Salty Ditty', 'inspirational', 'salty-ditty.mp3', 95],
         ];
 
-        foreach ($tracks as $track) {
-            MusicTrack::firstOrCreate(
-                ['file_path' => $track['file_path']],
-                $track
-            );
+        MusicTrack::query()->where('is_ai_generated', false)->delete();
+
+        foreach ($tracks as [$title, $mood, $file, $dur]) {
+            MusicTrack::create([
+                'title'            => $title,
+                'artist'           => 'Kevin MacLeod',
+                'mood'             => $mood,
+                'source'           => 'custom',
+                'duration_seconds' => $dur,
+                'file_path'        => "music/{$mood}/{$file}",
+                'is_ai_generated'  => false,
+            ]);
         }
     }
 }

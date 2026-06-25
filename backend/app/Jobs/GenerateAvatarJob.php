@@ -38,7 +38,8 @@ class GenerateAvatarJob implements ShouldQueue
         @mkdir($outputDir, 0775, true);
         $outputFile = "{$outputDir}/{$job->id}.mp4";
 
-        $cmd = "python3 " . escapeshellarg($script)
+        $pythonBin = config('services.python.bin', 'python3');
+        $cmd = escapeshellarg($pythonBin) . " " . escapeshellarg($script)
             . " --face-image " . escapeshellarg($faceImagePath)
             . " --output "     . escapeshellarg($outputFile)
             . " --space "      . escapeshellarg($space)

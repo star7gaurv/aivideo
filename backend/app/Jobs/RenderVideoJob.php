@@ -26,6 +26,15 @@ class RenderVideoJob implements ShouldQueue
         $job     = $this->renderJob;
         $project = $job->project;
 
+        try {
+            $this->run($job, $project);
+        } catch (\Throwable $e) {
+            $this->fail($job, $project, $e->getMessage());
+        }
+    }
+
+    private function run(RenderJob $job, Project $project): void
+    {
         $job->update(['status' => 'processing', 'started_at' => now()]);
 
         $propsFile  = storage_path("app/renders/props-{$job->id}.json");
@@ -66,7 +75,16 @@ class RenderVideoJob implements ShouldQueue
             2 => ['pipe', 'w'],
         ];
 
-        $process = proc_open($cmd, $descriptors, $pipes, $enginePath);
+        // Pass Laravel-configured paths into the node process environment
+        $env = array_merge($_ENV, [
+            'PATH'                  => getenv('PATH'),
+            'FFMPEG_PATH'           => config('services.ffmpeg.path', 'ffmpeg'),
+            'PIPER_VOICE_PATH'      => config('services.piper.voice_path', ''),
+            'PIPER_CMD'             => config('services.piper.cmd', 'python3 -m piper'),
+            'LARAVEL_STORAGE_PUBLIC'=> Storage::disk('public')->path(''),
+        ]);
+
+        $process = proc_open($cmd, $descriptors, $pipes, $enginePath, $env);
 
         if (!is_resource($process)) {
             $this->fail($job, $project, 'Failed to start render process');

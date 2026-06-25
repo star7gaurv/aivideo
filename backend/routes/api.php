@@ -51,6 +51,12 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::get('social/connect/{platform}', [\App\Http\Controllers\Api\SocialController::class, 'connect']);
     Route::delete('social/{platform}', [\App\Http\Controllers\Api\SocialController::class, 'disconnect']);
 
+    // AI assist (script generation, ideas, channel planning)
+    Route::post('assist/ideas',   [\App\Http\Controllers\Api\AssistController::class, 'ideas']);
+    Route::post('assist/channel', [\App\Http\Controllers\Api\AssistController::class, 'channel']);
+    Route::post('assist/script',  [\App\Http\Controllers\Api\AssistController::class, 'script']);
+    Route::post('assist/rewrite', [\App\Http\Controllers\Api\AssistController::class, 'rewrite']);
+
     // Publishing
     Route::post('publish', [\App\Http\Controllers\Api\PublishController::class, 'publish']);
     Route::get('publish', [\App\Http\Controllers\Api\PublishController::class, 'index']);

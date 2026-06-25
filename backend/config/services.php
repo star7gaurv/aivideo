@@ -56,6 +56,10 @@ return [
         'path' => env('VIDEO_ENGINE_PATH', base_path('../video-engine/remotion-pro')),
     ],
 
+    'python' => [
+        'bin' => env('PYTHON_BIN', 'python3'),
+    ],
+
     'ffmpeg' => [
         'path' => env('FFMPEG_PATH', 'ffmpeg'),
     ],

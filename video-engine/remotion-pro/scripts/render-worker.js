@@ -156,6 +156,16 @@ async function main() {
       stageAvatarAssets(props.scenes);
     }
 
+    // Safety net: every scene must have a valid finite duration, else the
+    // composition math (sceneFade/interpolate) produces NaN and crashes.
+    if (props.scenes) {
+      for (const scene of props.scenes) {
+        if (!scene.durationInFrames || !Number.isFinite(scene.durationInFrames) || scene.durationInFrames < 1) {
+          scene.durationInFrames = 90; // ~3s default at 30fps
+        }
+      }
+    }
+
     // Re-write props file with any updated paths/durations
     if (props.scenes) {
       fs.writeFileSync(propsFile, JSON.stringify(props));

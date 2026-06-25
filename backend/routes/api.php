@@ -14,6 +14,11 @@ use Illuminate\Http\Request;
 */
 
 
+// JWT Auth
+Route::post('auth/login',  [\App\Http\Controllers\Api\AuthController::class, 'login']);
+Route::post('auth/logout', [\App\Http\Controllers\Api\AuthController::class, 'logout'])->middleware('auth:api');
+Route::get('auth/me',      [\App\Http\Controllers\Api\AuthController::class, 'me'])->middleware('auth:api');
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return auth()->user();
 });

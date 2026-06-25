@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Video, FolderOpen, LayoutTemplate, LogOut, Plus } from 'lucide-react';
 
 const navItems = [
@@ -12,13 +12,21 @@ const navItems = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router   = useRouter();
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     if (!localStorage.getItem('aivideo_token')) router.replace('/login');
+    setEmail(localStorage.getItem('aivideo_user_email') ?? '');
   }, [router]);
+
+  // Studio pages (/projects/[id]) use their own full-screen layout — no sidebar
+  if (pathname.match(/^\/projects\/\d+$/)) {
+    return <>{children}</>;
+  }
 
   const signOut = () => {
     localStorage.removeItem('aivideo_token');
+    localStorage.removeItem('aivideo_user_email');
     router.replace('/login');
   };
 
@@ -35,7 +43,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         <nav className="flex-1 p-3 space-y-1">
           <Link
-            href="/projects/new"
+            href="/projects"
+            onClick={e => { e.preventDefault(); router.push('/projects'); }}
             className="flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium mb-3 transition-colors"
           >
             <Plus className="h-4 w-4" /> New Video
@@ -43,14 +52,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {navItems.map(({ href, label, icon: Icon }) => (
             <Link
               key={href} href={href}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${pathname.startsWith(href) ? 'bg-zinc-800 text-zinc-100' : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'}`}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                pathname === href || pathname.startsWith(href + '/')
+                  ? 'bg-zinc-800 text-zinc-100'
+                  : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'
+              }`}
             >
               <Icon className="h-4 w-4" />{label}
             </Link>
           ))}
         </nav>
 
-        <div className="p-3 border-t border-zinc-800">
+        <div className="p-3 border-t border-zinc-800 space-y-1">
+          {email && (
+            <div className="flex items-center gap-2 px-3 py-2">
+              <div className="h-6 w-6 rounded-full bg-violet-600 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
+                {email[0]?.toUpperCase()}
+              </div>
+              <span className="text-xs text-zinc-500 truncate">{email}</span>
+            </div>
+          )}
           <button onClick={signOut} className="flex items-center gap-2 px-3 py-2 w-full rounded-lg text-sm text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors">
             <LogOut className="h-4 w-4" /> Sign out
           </button>

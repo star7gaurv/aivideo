@@ -6,6 +6,7 @@ import { AncientHumans } from './ancient/AncientHumans';
 import ancientTiming from './ancient-timing.json';
 import { DreamProof } from './dream/DreamProof';
 import { DreamFilm } from './dream/DreamFilm';
+import { ShowcaseReel } from './dream/ShowcaseReel';
 import dreamTiming from './dream-timing.json';
 import { ShortFilm } from './ShortFilm/ShortFilm';
 import { defaultShortFilmProps, ShortFilmProps } from './ShortFilm/props';
@@ -70,6 +71,14 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={defaultAdFilmProps}
+      />
+      <Composition
+        id="ShowcaseReel"
+        component={ShowcaseReel}
+        durationInFrames={600}
+        fps={30}
+        width={1920}
+        height={1080}
       />
     </>
   );

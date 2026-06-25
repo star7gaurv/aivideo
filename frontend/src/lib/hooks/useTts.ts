@@ -4,6 +4,7 @@ import api from '../api';
 export interface TtsScene {
   id: string;
   audioUrl: string | null;
+  audioPath: string | null;
   durationSec: number;
   durationInFrames: number;
   error?: string;

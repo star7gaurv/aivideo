@@ -42,7 +42,11 @@ class PublishController extends Controller
             ], 422);
         }
 
-        $renderJob = $project->renderJobs()->latest()->first();
+        $renderJob = $project->renderJobs()->where('status', 'done')->latest()->first();
+
+        if (!$renderJob) {
+            return response()->json(['error' => 'No completed render found. Render the project first.'], 422);
+        }
 
         $job = PublishJob::create([
             'user_id'       => $userId,

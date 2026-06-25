@@ -54,14 +54,14 @@ export function SceneEditor({ scene, projectId, format }: Props) {
   const handleGenerateTts = () => {
     if (!projectId) return;
     generateTts(
-      { projectId, scenes: scenes.map(s => ({ id: s.id, narration: s.narration })) },
+      { project_id: Number(projectId), scenes: scenes.map(s => ({ id: s.id, narration: s.narration })) },
       {
         onSuccess: (data) => {
-          data.scenes?.forEach((r: { id: string; audioUrl: string; audioPath: string; durationInFrames: number }) => {
+          data.scenes?.forEach((r: { id: string; audioUrl: string | null; audioPath: string | null; durationInFrames: number }) => {
             updateScene(r.id, {
-              narrationAudioUrl: r.audioUrl,
-              narrationAudioPath: r.audioPath,
-              durationHint: r.durationInFrames,
+              narrationAudioUrl:  r.audioUrl  ?? undefined,
+              narrationAudioPath: r.audioPath ?? undefined,
+              durationHint:       r.durationInFrames,
             });
           });
         },

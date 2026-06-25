@@ -24,8 +24,9 @@ class GeneratedImage extends Model
         return $this->belongsTo(Project::class);
     }
 
-    public function getUrlAttribute(): string
+    public function getUrlAttribute(): ?string
     {
+        if (empty($this->file_path)) return null;
         return Storage::disk('public')->url($this->file_path);
     }
 }

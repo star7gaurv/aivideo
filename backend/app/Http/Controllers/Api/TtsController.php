@@ -68,12 +68,14 @@ class TtsController extends Controller
 
         // Build public URLs for each scene's audio
         $baseUrl  = Storage::disk('public')->url("tts/{$projectId}");
-        $scenes_out = array_map(function ($scene) use ($baseUrl) {
+        $scenes_out = array_map(function ($scene) use ($baseUrl, $projectId) {
+            $hasAudio = !empty($scene['wavPath']);
             return [
                 'id'               => $scene['id'],
-                'audioUrl'         => $scene['wavPath'] ? "{$baseUrl}/{$scene['id']}.wav" : null,
-                'durationSec'      => $scene['durationSec'],
-                'durationInFrames' => $scene['durationInFrames'],
+                'audioUrl'         => $hasAudio ? "{$baseUrl}/{$scene['id']}.wav" : null,
+                'audioPath'        => $hasAudio ? "tts/{$projectId}/{$scene['id']}.wav" : null,
+                'durationSec'      => $scene['durationSec'] ?? null,
+                'durationInFrames' => $scene['durationInFrames'] ?? null,
                 'error'            => $scene['error'] ?? null,
             ];
         }, $result['scenes']);

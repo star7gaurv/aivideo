@@ -17,8 +17,9 @@ class MusicTrack extends Model
 
     protected $appends = ['stream_url'];
 
-    public function getStreamUrlAttribute(): string
+    public function getStreamUrlAttribute(): ?string
     {
+        if (empty($this->file_path)) return null;
         return Storage::disk('public')->url($this->file_path);
     }
 }

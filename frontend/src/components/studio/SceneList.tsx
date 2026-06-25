@@ -8,9 +8,10 @@ interface Props {
   onSelect: (id: string) => void;
   onAdd: () => void;
   onDelete: (id: string) => void;
+  onReorder: (from: number, to: number) => void;
 }
 
-export function SceneList({ scenes, activeId, onSelect, onAdd, onDelete }: Props) {
+export function SceneList({ scenes, activeId, onSelect, onAdd, onDelete, onReorder }: Props) {
   return (
     <aside className="w-60 shrink-0 bg-zinc-900 border-r border-zinc-800 flex flex-col overflow-hidden">
       {/* Header */}
@@ -29,6 +30,14 @@ export function SceneList({ scenes, activeId, onSelect, onAdd, onDelete }: Props
         {scenes.map((scene, i) => (
           <div
             key={scene.id}
+            draggable
+            onDragStart={(e) => e.dataTransfer.setData('text/plain', String(i))}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              const from = Number(e.dataTransfer.getData('text/plain'));
+              if (!Number.isNaN(from) && from !== i) onReorder(from, i);
+            }}
             onClick={() => onSelect(scene.id)}
             className={`group relative rounded-xl border cursor-pointer transition-all ${
               activeId === scene.id

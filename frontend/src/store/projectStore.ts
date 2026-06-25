@@ -5,6 +5,8 @@ export interface Scene {
   narration: string;
   imageUrl?: string;
   overlayText?: string;
+  /** AI-suggested prompt for generating this scene's image */
+  imagePrompt?: string;
   durationHint?: number;
   /** Storage-relative path returned by TTS generate, e.g. "tts/42/scene1.wav" */
   narrationAudioPath?: string;
@@ -23,6 +25,9 @@ export interface ProjectState {
   templateId: string;
   scenes: Scene[];
   musicTrackId: number | null;
+  style?: string;
+  musicMood?: string;
+  targetSeconds?: number;
 
   setId: (id: string) => void;
   setTitle: (title: string) => void;
@@ -31,7 +36,10 @@ export interface ProjectState {
   addScene: () => void;
   updateScene: (id: string, patch: Partial<Scene>) => void;
   removeScene: (id: string) => void;
+  setScenes: (scenes: Scene[]) => void;
+  reorderScenes: (from: number, to: number) => void;
   setMusic: (id: number | null) => void;
+  setMeta: (patch: Partial<Pick<ProjectState, 'style' | 'musicMood' | 'targetSeconds'>>) => void;
   reset: () => void;
   loadFromApi: (project: Partial<ProjectState> & { config?: { scenes?: Scene[]; music_track_id?: number } }) => void;
 }
@@ -57,7 +65,16 @@ export const useProjectStore = create<ProjectState>((set) => ({
   updateScene: (id, patch) =>
     set((s) => ({ scenes: s.scenes.map((sc) => (sc.id === id ? { ...sc, ...patch } : sc)) })),
   removeScene: (id) => set((s) => ({ scenes: s.scenes.filter((sc) => sc.id !== id) })),
+  setScenes: (scenes) => set({ scenes }),
+  reorderScenes: (from, to) =>
+    set((s) => {
+      const next = [...s.scenes];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+      return { scenes: next };
+    }),
   setMusic: (musicTrackId) => set({ musicTrackId }),
+  setMeta: (patch) => set(patch),
   reset: () => set({ id: null, title: 'My Video', format: 'landscape', templateId: '', scenes: [defaultScene()], musicTrackId: null }),
   loadFromApi: (project) =>
     set({

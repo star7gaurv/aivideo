@@ -56,12 +56,17 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={defaultShortFilmProps}
-        calculateMetadata={({ props }: { props: ShortFilmProps }) => ({
-          durationInFrames: (props.scenes ?? defaultShortFilmProps.scenes!).reduce(
-            (s, sc) => s + (sc.durationInFrames || 90),
-            0
-          ),
-        })}
+        calculateMetadata={({ props }: { props: ShortFilmProps & { format?: string } }) => {
+          const landscape = props.format === 'landscape';
+          return {
+            durationInFrames: (props.scenes ?? defaultShortFilmProps.scenes!).reduce(
+              (s, sc) => s + (sc.durationInFrames || 90),
+              0
+            ),
+            width:  landscape ? 1920 : 1080,
+            height: landscape ? 1080 : 1920,
+          };
+        }}
       />
       <Composition
         id="AdFilm"

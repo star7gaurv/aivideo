@@ -33,22 +33,34 @@ class AiTextService
      */
     public function json(string $system, string $user): ?array
     {
-        $raw = $this->complete(
-            $system . "\n\nRespond ONLY with valid minified JSON. No markdown, no code fences, no commentary.",
-            $user
-        );
-        return $this->extractJson($raw);
+        $sys = $system . "\n\nRespond ONLY with valid minified JSON. No markdown, no code fences, no commentary.";
+
+        $key = config('services.gemini.key');
+
+        // Free models are non-deterministic. Plain mode handles large payloads
+        // reliably; JSON mode is a backup for when plain returns prose.
+        foreach ([false, true] as $jsonMode) {
+            $raw = ($key ? $this->geminiComplete($key, $sys, $user, $jsonMode) : null)
+                ?? $this->pollinationsComplete($sys, $user, $jsonMode);
+
+            $parsed = $this->extractJson($raw ?? '');
+            if ($parsed !== null) return $parsed;
+        }
+        return null;
     }
 
-    private function geminiComplete(string $key, string $system, string $user): ?string
+    private function geminiComplete(string $key, string $system, string $user, bool $jsonMode = false): ?string
     {
         try {
+            $genConfig = ['temperature' => 0.9, 'maxOutputTokens' => 2048];
+            if ($jsonMode) $genConfig['responseMimeType'] = 'application/json';
+
             $resp = Http::timeout(45)->post(
                 "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$key}",
                 [
                     'systemInstruction' => ['parts' => [['text' => $system]]],
                     'contents'          => [['parts' => [['text' => $user]]]],
-                    'generationConfig'  => ['temperature' => 0.9, 'maxOutputTokens' => 2048],
+                    'generationConfig'  => $genConfig,
                 ]
             );
             if (!$resp->successful()) return null;
@@ -60,16 +72,19 @@ class AiTextService
         }
     }
 
-    private function pollinationsComplete(string $system, string $user): ?string
+    private function pollinationsComplete(string $system, string $user, bool $jsonMode = false): ?string
     {
         try {
-            $resp = Http::timeout(45)->post('https://text.pollinations.ai/', [
+            $payload = [
                 'messages' => [
                     ['role' => 'system', 'content' => $system],
                     ['role' => 'user',   'content' => $user],
                 ],
                 'model'    => 'openai',
-            ]);
+            ];
+            if ($jsonMode) $payload['jsonMode'] = true;
+
+            $resp = Http::timeout(60)->post('https://text.pollinations.ai/', $payload);
             if (!$resp->successful()) return null;
             return trim($resp->body());
         } catch (\Throwable $e) {

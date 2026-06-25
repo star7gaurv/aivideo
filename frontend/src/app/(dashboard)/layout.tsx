@@ -19,8 +19,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     setEmail(localStorage.getItem('aivideo_user_email') ?? '');
   }, [router]);
 
-  // Studio pages (/projects/[id]) use their own full-screen layout — no sidebar
-  if (pathname.match(/^\/projects\/\d+$/)) {
+  // Studio (/projects/[id]) and the create flow (/projects/new) are full-screen — no sidebar
+  if (pathname.match(/^\/projects\/\d+$/) || pathname === '/projects/new') {
     return <>{children}</>;
   }
 

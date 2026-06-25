@@ -1,8 +1,12 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useProjectStore } from '@/store/projectStore';
 import { useProject, useUpdateProject } from '@/lib/hooks/useProjects';
 import { useTriggerRender, useRenderStatus } from '@/lib/hooks/useRenderStatus';
+import { useGenerateTts } from '@/lib/hooks/useTts';
+import { useGenerateImage } from '@/lib/hooks/useImageGen';
+import api from '@/lib/api';
 import { StudioTopBar } from './StudioTopBar';
 import { SceneList }    from './SceneList';
 import { SceneCanvas }  from './SceneCanvas';
@@ -14,20 +18,90 @@ import { Loader2, Download, X, AlertCircle, CheckCircle2 } from 'lucide-react';
 interface Props { projectId: string; }
 
 export function StudioLayout({ projectId }: Props) {
+  const params = useSearchParams();
   const { data: project, isLoading } = useProject(projectId);
   const { mutate: updateProject }    = useUpdateProject();
   const { mutate: triggerRender }    = useTriggerRender();
+  const { mutateAsync: genTts }      = useGenerateTts();
+  const { mutateAsync: genImage }    = useGenerateImage();
 
   const store = useProjectStore();
-  const { title, format, scenes, musicTrackId, setTitle, setFormat, addScene, removeScene, loadFromApi } = store;
+  const { title, format, scenes, musicTrackId, musicMood, setTitle, setFormat, addScene, removeScene, updateScene, setMusic, loadFromApi } = store;
 
   const [activeSceneId, setActiveSceneId] = useState<string | null>(null);
   const [showMusic,    setShowMusic]       = useState(false);
   const [showPublish,  setShowPublish]     = useState(false);
   const [renderJobId,  setRenderJobId]     = useState<number | null>(null);
   const [renderError,  setRenderError]     = useState<string | null>(null);
+  const [generating,   setGenerating]      = useState(false);
+  const [genMsg,       setGenMsg]          = useState('');
+  const autoRan = useRef(false);
 
   const { data: renderStatus } = useRenderStatus(renderJobId);
+
+  /* Hydrate musicMood from project config */
+  useEffect(() => {
+    const cfg = (project?.config ?? {}) as { music_mood?: string };
+    if (cfg.music_mood) store.setMeta({ musicMood: cfg.music_mood });
+  }, [project]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* Batch-generate voice + images + music for all scenes */
+  const generateEverything = async () => {
+    if (generating || !store.id) return;
+    setGenerating(true);
+    try {
+      const pid = Number(store.id);
+      const cur = useProjectStore.getState().scenes;
+
+      // 1) Narration (one batch call for all scenes with text)
+      const withText = cur.filter((s) => s.narration?.trim());
+      if (withText.length) {
+        setGenMsg('Generating voiceover…');
+        const res = await genTts({ project_id: pid, scenes: withText.map((s) => ({ id: s.id, narration: s.narration })) });
+        res.scenes?.forEach((r) => updateScene(r.id, {
+          narrationAudioUrl:  r.audioUrl  ?? undefined,
+          narrationAudioPath: r.audioPath ?? undefined,
+          durationHint:       r.durationInFrames,
+        }));
+      }
+
+      // 2) Images (parallel, for scenes that have a prompt but no image yet)
+      const isPortrait = useProjectStore.getState().format !== 'landscape';
+      const w = isPortrait ? 768 : 1280;
+      const h = isPortrait ? 1280 : 720;
+      const needImg = useProjectStore.getState().scenes.filter((s) => s.imagePrompt && !s.imageUrl);
+      if (needImg.length) {
+        setGenMsg(`Generating ${needImg.length} images…`);
+        await Promise.all(needImg.map(async (s) => {
+          try {
+            const img = await genImage({ prompt: s.imagePrompt!, provider: 'pollinations', project_id: pid, width: w, height: h });
+            updateScene(s.id, { imageUrl: img.url });
+          } catch { /* skip failed image */ }
+        }));
+      }
+
+      // 3) Auto-pick music by mood
+      if (!useProjectStore.getState().musicTrackId && musicMood) {
+        setGenMsg('Picking music…');
+        try {
+          const tracks = await api.get('/v1/music', { params: { mood: musicMood } }).then((r) => r.data);
+          if (Array.isArray(tracks) && tracks.length) setMusic(tracks[0].id);
+        } catch { /* ignore */ }
+      }
+    } finally {
+      setGenerating(false);
+      setGenMsg('');
+    }
+  };
+
+  /* Auto-run generation once when arriving fresh from the create flow */
+  useEffect(() => {
+    if (autoRan.current) return;
+    if (params.get('fresh') === '1' && store.id && scenes.length > 0) {
+      autoRan.current = true;
+      generateEverything();
+    }
+  }, [store.id, scenes.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* Hydrate store from API on mount */
   useEffect(() => {
@@ -106,12 +180,22 @@ export function StudioLayout({ projectId }: Props) {
         format={format}
         renderStatus={rsStatus}
         hasOutput={hasOutput}
+        generating={generating}
         onTitleChange={setTitle}
         onFormatChange={setFormat}
+        onGenerateAll={generateEverything}
         onMusicClick={() => setShowMusic(true)}
         onRenderClick={handleRender}
         onPublishClick={() => setShowPublish(true)}
       />
+
+      {/* Generation banner */}
+      {generating && (
+        <div className="bg-violet-950/40 border-b border-violet-800/40 px-4 py-2 flex items-center gap-2 shrink-0">
+          <Loader2 className="h-3.5 w-3.5 text-violet-400 animate-spin" />
+          <span className="text-xs text-violet-200">{genMsg || 'Generating…'}</span>
+        </div>
+      )}
 
       {/* Main 3-panel area */}
       <div className="flex flex-1 overflow-hidden">
@@ -121,6 +205,7 @@ export function StudioLayout({ projectId }: Props) {
           onSelect={setActiveSceneId}
           onAdd={handleAddScene}
           onDelete={handleDeleteScene}
+          onReorder={store.reorderScenes}
         />
         <SceneCanvas
           scene={activeScene}

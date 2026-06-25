@@ -1,15 +1,17 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Music, Play, Upload, Check, Loader2, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Music, Play, Upload, Check, Loader2, ChevronDown, Sparkles } from 'lucide-react';
 
 interface Props {
   title: string;
   format: 'landscape' | 'portrait' | 'ad';
   renderStatus: 'idle' | 'queued' | 'processing' | 'done' | 'failed';
   hasOutput: boolean;
+  generating: boolean;
   onTitleChange: (t: string) => void;
   onFormatChange: (f: 'landscape' | 'portrait' | 'ad') => void;
+  onGenerateAll: () => void;
   onMusicClick: () => void;
   onRenderClick: () => void;
   onPublishClick: () => void;
@@ -18,8 +20,8 @@ interface Props {
 const FORMAT_LABELS = { landscape: '16:9 Explainer', portrait: '9:16 Reel', ad: '15s Ad' };
 
 export function StudioTopBar({
-  title, format, renderStatus, hasOutput,
-  onTitleChange, onFormatChange, onMusicClick, onRenderClick, onPublishClick,
+  title, format, renderStatus, hasOutput, generating,
+  onTitleChange, onFormatChange, onGenerateAll, onMusicClick, onRenderClick, onPublishClick,
 }: Props) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft]     = useState(title);
@@ -85,6 +87,16 @@ export function StudioTopBar({
           </div>
         )}
       </div>
+
+      {/* Generate Everything */}
+      <button
+        onClick={onGenerateAll}
+        disabled={generating}
+        className="flex items-center gap-1.5 text-xs font-semibold bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 disabled:opacity-60 text-white px-3 py-1.5 rounded-lg transition-colors shrink-0"
+      >
+        {generating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+        {generating ? 'Generating…' : 'Generate All'}
+      </button>
 
       {/* Music */}
       <button

@@ -1,8 +1,7 @@
 'use client';
-import { useState } from 'react';
-import { Monitor, Smartphone, Megaphone, Plus, Loader2, Pencil, AlertCircle, CheckCircle2, Clock, Film } from 'lucide-react';
-import { useProjects, useDeleteProject } from '@/lib/hooks/useProjects';
-import { CreateVideoModal } from '@/components/studio/CreateVideoModal';
+import { Monitor, Smartphone, Megaphone, Plus, Loader2, Pencil, AlertCircle, CheckCircle2, Clock, Film, Sparkles } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useProjects } from '@/lib/hooks/useProjects';
 import Link from 'next/link';
 
 const FORMAT_ICON  = { landscape: Monitor, portrait: Smartphone, ad: Megaphone };
@@ -26,20 +25,15 @@ const STATUS_ICON = {
 };
 
 export default function ProjectsPage() {
+  const router = useRouter();
   const { data, isLoading } = useProjects();
-  const { mutate: deleteProject } = useDeleteProject();
-  const [showCreate, setShowCreate] = useState(false);
-  const [defaultFmt, setDefaultFmt] = useState<'landscape' | 'portrait' | 'ad'>('portrait');
 
   const projects = data?.data ?? [];
   const total     = projects.length;
   const rendering = projects.filter(p => p.status === 'rendering').length;
   const done      = projects.filter(p => p.status === 'done').length;
 
-  const openCreate = (fmt: 'landscape' | 'portrait' | 'ad' = 'portrait') => {
-    setDefaultFmt(fmt);
-    setShowCreate(true);
-  };
+  const openCreate = () => router.push('/projects/new');
 
   return (
     <div className="min-h-full">
@@ -68,11 +62,11 @@ export default function ProjectsPage() {
         {([
           { fmt: 'portrait'  as const, icon: Smartphone, label: 'New Short Reel', desc: '9:16 · TTS + Avatar · Reels/Shorts',  border: 'hover:border-violet-500/60', iconColor: 'text-violet-400', iconBg: 'bg-violet-500/10 border-violet-500/20' },
           { fmt: 'ad'        as const, icon: Megaphone,  label: 'New 15s Ad',     desc: '15 sec · Product + CTA',              border: 'hover:border-orange-500/60', iconColor: 'text-orange-400', iconBg: 'bg-orange-500/10 border-orange-500/20' },
-          { fmt: 'landscape' as const, icon: Monitor,    label: 'New Explainer',  desc: '16:9 · YouTube · Long-form',          border: 'hover:border-blue-500/60',   iconColor: 'text-blue-400',   iconBg: 'bg-blue-500/10 border-blue-500/20' },
+          { fmt: 'landscape' as const, icon: Sparkles,   label: 'AI Channel Planner',  desc: "Don't know what to post? We plan it", border: 'hover:border-blue-500/60',   iconColor: 'text-blue-400',   iconBg: 'bg-blue-500/10 border-blue-500/20' },
         ]).map(q => (
           <button
             key={q.fmt}
-            onClick={() => openCreate(q.fmt)}
+            onClick={openCreate}
             className={`card-lift flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-4 text-left transition-all ${q.border}`}
           >
             <div className={`h-10 w-10 rounded-xl border flex items-center justify-center shrink-0 ${q.iconBg}`}>
@@ -157,8 +151,6 @@ export default function ProjectsPage() {
           })}
         </div>
       )}
-
-      {showCreate && <CreateVideoModal onClose={() => setShowCreate(false)} defaultFormat={defaultFmt} />}
     </div>
   );
 }

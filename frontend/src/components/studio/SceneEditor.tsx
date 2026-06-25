@@ -1,8 +1,9 @@
 'use client';
 import { useState } from 'react';
-import { Mic, Image as ImageIcon, Type, User, ChevronDown, ChevronRight, Loader2, Play } from 'lucide-react';
+import { Mic, Image as ImageIcon, Type, User, ChevronDown, ChevronRight, Loader2, Play, Wand2 } from 'lucide-react';
 import { useProjectStore } from '@/store/projectStore';
 import { useGenerateTts } from '@/lib/hooks/useTts';
+import { useRewrite } from '@/lib/hooks/useAssist';
 import { ImageGenerator } from '@/components/dashboard/ImageGenerator';
 import { AvatarCreator } from '@/components/dashboard/AvatarCreator';
 import { AudioPlayer } from '@/components/ui/AudioPlayer';
@@ -39,6 +40,7 @@ export function SceneEditor({ scene, projectId, format }: Props) {
   const updateScene   = useProjectStore(s => s.updateScene);
   const scenes        = useProjectStore(s => s.scenes);
   const { mutate: generateTts, isPending: ttsLoading } = useGenerateTts();
+  const { mutateAsync: rewrite, isPending: rewriting } = useRewrite();
 
   const [showImageGen, setShowImageGen]   = useState(false);
   const [showAvatar, setShowAvatar]       = useState(false);
@@ -97,6 +99,19 @@ export function SceneEditor({ scene, projectId, format }: Props) {
               {ttsLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Mic className="h-3.5 w-3.5" />}
               Generate Voice
             </button>
+            <button
+              onClick={async () => {
+                if (!scene.narration?.trim()) return;
+                const t = await rewrite({ text: scene.narration });
+                if (t) updateScene(scene.id, { narration: t });
+              }}
+              disabled={rewriting || !scene.narration}
+              title="Rewrite with AI"
+              className="flex items-center gap-1.5 text-xs font-medium border border-zinc-700 hover:border-violet-500 text-zinc-400 hover:text-violet-300 disabled:opacity-50 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              {rewriting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Wand2 className="h-3.5 w-3.5" />}
+              Rewrite
+            </button>
             {scene.narrationAudioUrl && (
               <span className="text-[10px] text-green-400 font-medium flex items-center gap-1">
                 <Play className="h-2.5 w-2.5" /> TTS ready
@@ -139,6 +154,8 @@ export function SceneEditor({ scene, projectId, format }: Props) {
           {showImageGen && (
             <div className="mt-3">
               <ImageGenerator
+                defaultPrompt={scene.imagePrompt}
+                projectId={projectId ? Number(projectId) : undefined}
                 onSelect={url => { updateScene(scene.id, { imageUrl: url }); setShowImageGen(false); }}
                 onClose={() => setShowImageGen(false)}
               />

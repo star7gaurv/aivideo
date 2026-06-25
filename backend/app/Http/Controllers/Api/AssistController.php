@@ -49,7 +49,7 @@ class AssistController extends Controller
             . "Propose ONE focused niche and a starter plan. "
             . 'Return JSON: {"niche":"","description":"","audience":"","why_it_works":"",'
             . '"video_ideas":[{"title":"","hook":""}],"schedule":""}. '
-            . "Include 8 video ideas. Keep schedule to one sentence.";
+            . "Include 6 video ideas. Keep every field concise; schedule one sentence.";
 
         $result = $this->ai->json($system, $user);
 

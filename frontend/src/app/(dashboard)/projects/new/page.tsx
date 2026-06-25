@@ -1,9 +1,6 @@
 'use client';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { CreateFlow } from '@/components/create/CreateFlow';
 
 export default function NewProjectPage() {
-  const router = useRouter();
-  useEffect(() => { router.replace('/projects'); }, [router]);
-  return null;
+  return <CreateFlow />;
 }

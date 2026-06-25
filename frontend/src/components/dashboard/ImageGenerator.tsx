@@ -15,10 +15,11 @@ interface Props {
   onSelect: (url: string) => void;
   onClose: () => void;
   projectId?: number;
+  defaultPrompt?: string;
 }
 
-export function ImageGenerator({ onSelect, onClose, projectId }: Props) {
-  const [prompt, setPrompt]     = useState('');
+export function ImageGenerator({ onSelect, onClose, projectId, defaultPrompt }: Props) {
+  const [prompt, setPrompt]     = useState(defaultPrompt ?? '');
   const [provider, setProvider] = useState('pollinations');
   const [result, setResult]     = useState<string | null>(null);
   const { mutate, isPending }   = useGenerateImage();

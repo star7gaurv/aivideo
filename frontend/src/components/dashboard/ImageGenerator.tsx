@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { X, Wand2, Loader2 } from 'lucide-react';
+import { X, Wand2 } from 'lucide-react';
 import { useGenerateImage } from '@/lib/hooks/useImageGen';
 import { Button } from '../ui/Button';
 

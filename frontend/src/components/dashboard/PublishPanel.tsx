@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Rocket, Download, Youtube, Instagram, CheckCircle2, ExternalLink, AlertCircle, Loader2 } from 'lucide-react';
+import { Rocket, Youtube, Instagram, CheckCircle2, ExternalLink, AlertCircle, Loader2 } from 'lucide-react';
 import { useProjectStore } from '@/store/projectStore';
 import { useCreateProject, useUpdateProject } from '@/lib/hooks/useProjects';
 import { useTriggerRender } from '@/lib/hooks/useRenderStatus';

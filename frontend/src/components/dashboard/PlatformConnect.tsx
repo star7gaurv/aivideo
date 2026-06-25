@@ -87,7 +87,7 @@ function PlatformRow({ platform, account }: { platform: string; account?: Social
 }
 
 export function PlatformConnect() {
-  const { data: accounts = [], isLoading } = useSocialAccounts();
+  const { data: accounts = [] } = useSocialAccounts();
 
   const accountMap = Object.fromEntries(accounts.map((a) => [a.platform, a]));
 

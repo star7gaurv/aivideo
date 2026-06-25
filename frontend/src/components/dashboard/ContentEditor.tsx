@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Plus, Trash2, Image as ImageIcon, Mic, CheckCircle2, User, Video } from 'lucide-react';
+import { Plus, Trash2, Image as ImageIcon, Mic, CheckCircle2, User } from 'lucide-react';
 import { useProjectStore } from '@/store/projectStore';
 import { Button } from '../ui/Button';
 import { ImageGenerator } from './ImageGenerator';

@@ -14,5 +14,8 @@
 use Illuminate\Support\Facades\Route;
 use Wave\Facades\Wave;
 
+// Redirect root to Filament admin
+Route::get('/', fn() => redirect('/admin'));
+
 // Wave routes
 Wave::routes();

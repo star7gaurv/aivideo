@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import { Video, FolderOpen, LayoutTemplate, LogOut, Plus } from 'lucide-react';
 
 const navItems = [
-  { href: '/dashboard/projects',  label: 'Projects',   icon: FolderOpen },
-  { href: '/dashboard/templates', label: 'Templates',  icon: LayoutTemplate },
+  { href: '/projects',  label: 'Projects',   icon: FolderOpen },
+  { href: '/templates', label: 'Templates',  icon: LayoutTemplate },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -35,7 +35,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         <nav className="flex-1 p-3 space-y-1">
           <Link
-            href="/dashboard/projects/new"
+            href="/projects/new"
             className="flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium mb-3 transition-colors"
           >
             <Plus className="h-4 w-4" /> New Video

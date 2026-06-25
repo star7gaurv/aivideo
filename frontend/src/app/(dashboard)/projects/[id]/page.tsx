@@ -47,7 +47,7 @@ export default function EditProjectPage({ params }: PageProps) {
       <div className="max-w-xl mx-auto py-20 text-center space-y-4">
         <AlertCircle className="h-10 w-10 text-red-400 mx-auto" />
         <p className="text-zinc-300">Project not found or you don't have access.</p>
-        <Link href="/dashboard/projects" className="text-violet-400 hover:text-violet-300 text-sm">
+        <Link href="/projects" className="text-violet-400 hover:text-violet-300 text-sm">
           ← Back to projects
         </Link>
       </div>
@@ -66,7 +66,7 @@ export default function EditProjectPage({ params }: PageProps) {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link
-          href="/dashboard/projects"
+          href="/projects"
           className="text-zinc-500 hover:text-zinc-300 transition-colors"
         >
           <ArrowLeft className="h-5 w-5" />

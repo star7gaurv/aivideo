@@ -19,7 +19,7 @@ export default function LoginPage() {
     try {
       const res = await api.post('/auth/login', { email, password });
       localStorage.setItem('aivideo_token', res.data.token);
-      router.push('/dashboard/projects');
+      router.push('/projects');
     } catch {
       setError('Invalid credentials. Please try again.');
     } finally {

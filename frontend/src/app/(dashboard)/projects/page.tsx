@@ -34,7 +34,7 @@ export default function ProjectsPage() {
     <div className="space-y-6 max-w-5xl">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-zinc-100">My Projects</h1>
-        <Link href="/dashboard/projects/new">
+        <Link href="/projects/new">
           <Button><Plus className="h-4 w-4" /> New Video</Button>
         </Link>
       </div>
@@ -43,7 +43,7 @@ export default function ProjectsPage() {
         <div className="text-center py-20 border border-dashed border-zinc-800 rounded-2xl">
           <Film className="h-10 w-10 text-zinc-700 mx-auto mb-3" />
           <p className="text-zinc-500 mb-4">No projects yet. Create your first video!</p>
-          <Link href="/dashboard/projects/new">
+          <Link href="/projects/new">
             <Button><Plus className="h-4 w-4" /> Create Video</Button>
           </Link>
         </div>
@@ -99,7 +99,7 @@ export default function ProjectsPage() {
                   </div>
 
                   <div className="flex gap-2">
-                    <Link href={`/dashboard/projects/${p.id}`} className="flex-1">
+                    <Link href={`/projects/${p.id}`} className="flex-1">
                       <Button variant="secondary" size="sm" className="w-full">
                         <Pencil className="h-3.5 w-3.5" /> Edit
                       </Button>

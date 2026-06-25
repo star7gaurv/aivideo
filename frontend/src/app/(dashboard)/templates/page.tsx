@@ -28,7 +28,7 @@ export default function TemplatesPage() {
               <span className="text-xs text-zinc-500">{t.duration_sec}s</span>
             </div>
             <p className="text-xs text-zinc-600">Scenes: {t.scenes.join(' · ')}</p>
-            <Link href={`/dashboard/projects/new`}>
+            <Link href={`/projects/new`}>
               <Button size="sm" variant="secondary" className="w-full">Use template</Button>
             </Link>
           </div>
